@@ -1,5 +1,7 @@
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 public class Menu extends JFrame{
 
@@ -10,10 +12,11 @@ public class Menu extends JFrame{
     private static final String DUO_GAME = "Play with friend";
     private static final String ONLINE_GAME = "Play online";
     private static final String BACKGROUND_IMAGE_PATH = "/home/verion/Pulpit/PO2/VIII - Project/Checkers/src/Images/Background_Menu.jpg";
-    public static void run() {
+    public static void Run() {
 
-        JFrame frame = new JFrame("Checkers");
+        JFrame frame = new JFrame("Checkers - Menu");
         frame.setSize(1000, 700);
+        frame.setResizable(false);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         JButton Online = new JButton(ONLINE_GAME);
@@ -45,7 +48,13 @@ public class Menu extends JFrame{
         frame.add(buttonPanel);
         frame.setVisible(true);
 
-        Solo.addActionListener(e -> JOptionPane.showMessageDialog(frame, "Odpalamy tryb z kompem"));
+        Solo.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Game.Run();
+            }
+        });
+
 
         Duo.addActionListener(e -> JOptionPane.showMessageDialog(frame, "Tryb z ziomalem"));
 
