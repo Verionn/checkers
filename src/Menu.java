@@ -6,22 +6,15 @@ public class Menu extends JFrame{
     private static final int BUTTON_WIDTH = 200;
     private static final int BUTTON_HEIGHT = 40;
     private static final int MARGINS = 10;
-    private static String SOLO_GAME = "Play with Computer";
-    private static String DUO_GAME = "Play with friend";
-    private static String ONLINE_GAME = "Play online";
-    public static void run()
-    {
+    private static final String SOLO_GAME = "Play with Computer";
+    private static final String DUO_GAME = "Play with friend";
+    private static final String ONLINE_GAME = "Play online";
+    private static final String BACKGROUND_IMAGE_PATH = "/home/verion/Pulpit/PO2/VIII - Project/Checkers/src/Images/Background_Menu.jpg";
+    public static void run() {
 
         JFrame frame = new JFrame("Checkers");
         frame.setSize(1000, 700);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setVisible(true);
-
-        //ImageIcon backgroundImg = new ImageIcon("Background_Menu.jpg");
-        //JLabel backgroundLabel = new JLabel(backgroundImg);
-        //backgroundLabel.setBounds(0, 0, frame.getWidth(), frame.getHeight());
-
-        //frame.getContentPane().add(backgroundLabel);
 
         JButton Online = new JButton(ONLINE_GAME);
         JButton Duo= new JButton(DUO_GAME);
@@ -36,14 +29,26 @@ public class Menu extends JFrame{
         gbc.fill = GridBagConstraints.CENTER;
         gbc.weightx = 1;
         gbc.weighty = 1;
-        gbc.insets = new Insets(MARGINS, MARGINS, MARGINS, MARGINS); // marginesy
+        gbc.insets = new Insets(MARGINS, MARGINS, MARGINS, MARGINS);
 
         JPanel buttonPanel = new JPanel(new GridBagLayout());
+        buttonPanel.setOpaque(false);
         buttonPanel.add(Online, gbc);
         buttonPanel.add(Duo, gbc);
         buttonPanel.add(Solo, gbc);
 
+        ImageIcon imageIcon = new ImageIcon(BACKGROUND_IMAGE_PATH);
+        JLabel background = new JLabel(imageIcon);
+
+        frame.setContentPane(background);
         frame.setLayout(new GridBagLayout());
         frame.add(buttonPanel);
+        frame.setVisible(true);
+
+        Solo.addActionListener(e -> JOptionPane.showMessageDialog(frame, "Odpalamy tryb z kompem"));
+
+        Duo.addActionListener(e -> JOptionPane.showMessageDialog(frame, "Tryb z ziomalem"));
+
+        Online.addActionListener(e -> JOptionPane.showMessageDialog(frame, "Ziomal na drugim kompie"));
     }
 }
