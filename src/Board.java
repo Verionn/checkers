@@ -1,13 +1,14 @@
 import javax.swing.*;
 import java.awt.*;
-import java.util.Random;
 
 public class Board extends Game {
     private static final String BOARD_IMAGE_PATH = "/home/verion/Pulpit/PO2/VIII - Project/Checkers/src/Images/Board.png";
+    private static final int WINDOW_HEIGHT = 1000;
+    private static final int WINDOW_WIDTH = 1000;
     private static final int ROWS = 8;
     private static final int COLUMNS = 8;
-    private static JPanel boardPanel;
-    private static JLabel[][] cells = new JLabel[ROWS][COLUMNS];
+    private static JPanel Cells;
+    //private static JLabel[][] cells = new JLabel[ROWS][COLUMNS];
 
     static int[][] Positions= {
             {0, 2, 0, 2, 0, 2, 0, 2},
@@ -49,37 +50,33 @@ public class Board extends Game {
         //FillFields();
 
         JFrame frame = new JFrame("Checkers");
-        frame.setSize(1000, 700);
+        frame.setSize(WINDOW_WIDTH, WINDOW_HEIGHT);
         frame.setResizable(false);
         frame.setBackground(Color.gray);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        ImageIcon imageIcon = new ImageIcon(BOARD_IMAGE_PATH);
-        JLabel background = new JLabel(imageIcon);
+        ImageIcon Board = new ImageIcon(BOARD_IMAGE_PATH);
+        JLabel Background = new JLabel(Board);
 
-        boardPanel = new JPanel(new GridLayout(ROWS, COLUMNS));
-        boardPanel.setBackground(Color.gray);
-        frame.add(boardPanel);
-
-        frame.setContentPane(background);
+        frame.setContentPane(Background);
         frame.setLayout(new GridBagLayout());
 
-        for (int i = 0; i < ROWS; i++)
+        Cells = new JPanel(new GridLayout(ROWS,COLUMNS));
+        Cells.setSize(WINDOW_WIDTH, WINDOW_HEIGHT);
+        Cells.setOpaque(false);
+
+        for (int i = 0; i< 32; i++)
         {
-            for (int j = 0 ; j < COLUMNS; j++)
-            {
-                JLabel field = new JLabel();
-                field.setOpaque(true);
-                if ((i + j) % 2 == 0) {
-                    field.setBackground(Color.WHITE);
-                } else {
-                    field.setBackground(Color.GREEN);
-                }
-                cells[i][j] = field;
-                boardPanel.add(field);
-            }
+            Pawn red = new Pawn("RED");
+            Cells.add(red);
+        }
+        for (int i = 0; i< 32; i++)
+        {
+            Pawn red = new Pawn("WHITE");
+            Cells.add(red);
         }
 
+        frame.add(Cells);
         frame.setVisible(true);
     }
 
