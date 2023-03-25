@@ -4,7 +4,7 @@ public class Game {
     public static Player FirstPlayer;
     public static Player SecondPlayer;
 
-    static void RandomColors()
+    private static void RandomColors()
     {
         Random rand = new Random();
         int RandomNumber = rand.nextInt(2);
@@ -21,6 +21,7 @@ public class Game {
     }
     public static void Run(){
         RandomColors();
-        Board.Run();
+        new BoardFrame();
+
     }
 }
