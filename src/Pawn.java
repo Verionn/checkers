@@ -17,7 +17,7 @@ public class Pawn extends JLabel{
             setIcon(WhitePawn);
         }
         setPreferredSize(new Dimension(PAWN_SIZE, PAWN_SIZE));
-        setBorder(BorderFactory.createLineBorder(java.awt.Color.BLACK, 2));
+        //setBorder(BorderFactory.createLineBorder(java.awt.Color.BLACK, 2));
     }
 
 }
