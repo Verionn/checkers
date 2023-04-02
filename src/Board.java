@@ -97,7 +97,12 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener{
             System.out.println("Ruch wykonał pion innego koloru");
             return false;
         }
-        if(PAWN[x][y] != null)
+        if(x > 7 || y > 7 || x < 0 || y < 0)
+        {
+            System.out.println("Ruch poza mape");
+            return false;
+        }
+        if(PAWN[x][y] != null )
         {
             System.out.println("Ruch w miejsce istniejacego juz pionka");
             return false;
@@ -114,9 +119,9 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener{
         }
         if(pawn.getColor().equals("RED") && !pawn.isQueen())
         {
-            if(SELECTED_PAWN_Y > y)
+            if(SELECTED_PAWN_Y >= y)
             {
-                System.out.println("Ruch do tylu pionem czerwonym");
+                System.out.println("Ruch do tylu lub w bok pionem czerwonym");
                 return false;
             }
             if(y >= SELECTED_PAWN_Y + 2)
@@ -129,9 +134,9 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener{
         }
         if(pawn.getColor().equals("WHITE") && !pawn.isQueen())
         {
-            if(SELECTED_PAWN_Y < y)
+            if(SELECTED_PAWN_Y <= y)
             {
-                System.out.println("Ruch do tylu pionem bialym");
+                System.out.println("Ruch do tylu lub w bok pionem bialym");
                 return false;
             }
             if(y <= SELECTED_PAWN_Y - 2)
@@ -144,8 +149,7 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener{
 
         return true;
     }
-    private boolean CheckBeatings(Pawn pawn)
-    {
+    private boolean CheckBeatings(Pawn pawn) {
         if(pawn.isQueen())
         {
             System.out.println("Jestem damka");
@@ -217,7 +221,6 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener{
 
     @Override
     public void mouseDragged(MouseEvent e) {
-
         PAWN[SELECTED_PAWN_X][SELECTED_PAWN_Y].setX(e.getX() - FIELD_SIZE / 2);
         PAWN[SELECTED_PAWN_X][SELECTED_PAWN_Y].setY(e.getY() - FIELD_SIZE / 2);
         repaint();
