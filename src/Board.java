@@ -97,6 +97,16 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener{
             System.out.println("Ruch wykonał pion innego koloru");
             return false;
         }
+        if(PAWN[x][y] != null)
+        {
+            System.out.println("Ruch w miejsce istniejacego juz pionka");
+            return false;
+        }
+        if(Positions[x][y] == 0)
+        {
+            System.out.println("Ruch w miejsce zabronione");
+            return false;
+        }
         if(x == SELECTED_PAWN_X && y == SELECTED_PAWN_Y)
         {
             System.out.println("Ruch w te samo miejsce");
@@ -109,6 +119,13 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener{
                 System.out.println("Ruch do tylu pionem czerwonym");
                 return false;
             }
+            if(y >= SELECTED_PAWN_Y + 2)
+            {
+                System.out.println(SELECTED_PAWN_Y + " | " + y );
+                System.out.println("Ruch czerwonym pionem za daleko do przodu");
+                return false;
+            }
+
         }
         if(pawn.getColor().equals("WHITE") && !pawn.isQueen())
         {
@@ -117,9 +134,30 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener{
                 System.out.println("Ruch do tylu pionem bialym");
                 return false;
             }
+            if(y <= SELECTED_PAWN_Y - 2)
+            {
+                System.out.println(SELECTED_PAWN_Y + " | " + y );
+                System.out.println("Ruch bialym pionem za daleko do przodu");
+                return false;
+            }
         }
 
         return true;
+    }
+    private boolean CheckBeatings(Pawn pawn)
+    {
+        if(pawn.isQueen())
+        {
+            System.out.println("Jestem damka");
+        }
+        else
+        {
+            System.out.println("Jestem pionkiem");
+            int x = pawn.getX();
+            int y = pawn.getY();
+
+        }
+        return false;
     }
     private void ChangeMove() {
         if(MOVE.equals("WHITE")) {
@@ -150,6 +188,8 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener{
         PAWN[SELECTED_PAWN_X][SELECTED_PAWN_Y].setY(y * FIELD_SIZE);
 
 
+        CheckBeatings(PAWN[SELECTED_PAWN_X][SELECTED_PAWN_Y]);
+
         if(ValidateMove(x, y, PAWN[SELECTED_PAWN_X][SELECTED_PAWN_Y]))
         {
             System.out.println("Prawidlowy ruch!");
@@ -163,11 +203,6 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener{
             PAWN[SELECTED_PAWN_X][SELECTED_PAWN_Y].setY(SELECTED_PAWN_Y * FIELD_SIZE);
         }
         repaint();
-        /*if(x != SELECTED_PAWN_X || y != SELECTED_PAWN_Y)
-        {
-            PAWN[x][y] = PAWN[SELECTED_PAWN_X][SELECTED_PAWN_Y];
-            PAWN[SELECTED_PAWN_X][SELECTED_PAWN_Y] = null;
-        }*/
     }
 
     @Override
