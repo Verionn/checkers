@@ -59,7 +59,7 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener{
             for (int j = 0; j < COLUMNS; j++) {
                 if (PAWN[i][j] != null)
                 {
-                    if(PAWN[i][j].getCOLOR().equals("RED"))
+                    if(PAWN[i][j].getColor().equals("RED"))
                     {
                         g2d.setColor(Color.RED);
                         g2d.fillOval(PAWN[i][j].getX() + PAWN_OFFSET, PAWN[i][j].getY() + PAWN_OFFSET, PAWN_SIZE, PAWN_SIZE);
@@ -90,12 +90,38 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener{
             }
         }
     }
-    private void ValidateMove(int x, int y, String type, String color)
+    private boolean ValidateMove(int x, int y, Pawn pawn)
     {
+        if(!MOVE.equals(pawn.getColor()))
+        {
+            System.out.println("Ruch wykonał pion innego koloru");
+            return false;
+        }
+        if(x == SELECTED_PAWN_X && y == SELECTED_PAWN_Y)
+        {
+            System.out.println("Ruch w te samo miejsce");
+            return false;
+        }
+        if(pawn.getColor().equals("RED") && !pawn.isQueen())
+        {
+            if(SELECTED_PAWN_Y > y)
+            {
+                System.out.println("Ruch do tylu pionem czerwonym");
+                return false;
+            }
+        }
+        if(pawn.getColor().equals("WHITE") && !pawn.isQueen())
+        {
+            if(SELECTED_PAWN_Y < y)
+            {
+                System.out.println("Ruch do tylu pionem bialym");
+                return false;
+            }
+        }
 
+        return true;
     }
-    private void ChangeMove()
-    {
+    private void ChangeMove() {
         if(MOVE.equals("WHITE")) {
             MOVE = "RED";
         }
@@ -123,10 +149,25 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener{
         PAWN[SELECTED_PAWN_X][SELECTED_PAWN_Y].setX(x * FIELD_SIZE);
         PAWN[SELECTED_PAWN_X][SELECTED_PAWN_Y].setY(y * FIELD_SIZE);
 
-        PAWN[x][y] = PAWN[SELECTED_PAWN_X][SELECTED_PAWN_Y];
-        PAWN[SELECTED_PAWN_X][SELECTED_PAWN_Y] = null;
 
+        if(ValidateMove(x, y, PAWN[SELECTED_PAWN_X][SELECTED_PAWN_Y]))
+        {
+            System.out.println("Prawidlowy ruch!");
+            PAWN[x][y] = PAWN[SELECTED_PAWN_X][SELECTED_PAWN_Y];
+            PAWN[SELECTED_PAWN_X][SELECTED_PAWN_Y] = null;
+            ChangeMove();
+        }
+        else
+        {
+            PAWN[SELECTED_PAWN_X][SELECTED_PAWN_Y].setX(SELECTED_PAWN_X * FIELD_SIZE);
+            PAWN[SELECTED_PAWN_X][SELECTED_PAWN_Y].setY(SELECTED_PAWN_Y * FIELD_SIZE);
+        }
         repaint();
+        /*if(x != SELECTED_PAWN_X || y != SELECTED_PAWN_Y)
+        {
+            PAWN[x][y] = PAWN[SELECTED_PAWN_X][SELECTED_PAWN_Y];
+            PAWN[SELECTED_PAWN_X][SELECTED_PAWN_Y] = null;
+        }*/
     }
 
     @Override
@@ -142,8 +183,8 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener{
     @Override
     public void mouseDragged(MouseEvent e) {
 
-        PAWN[SELECTED_PAWN_X][SELECTED_PAWN_Y].setX(e.getX());
-        PAWN[SELECTED_PAWN_X][SELECTED_PAWN_Y].setY(e.getY());
+        PAWN[SELECTED_PAWN_X][SELECTED_PAWN_Y].setX(e.getX() - FIELD_SIZE / 2);
+        PAWN[SELECTED_PAWN_X][SELECTED_PAWN_Y].setY(e.getY() - FIELD_SIZE / 2);
         repaint();
     }
 
