@@ -2,15 +2,18 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 
-public class Board extends JPanel implements MouseListener {
+public class Board extends JPanel implements MouseListener, MouseMotionListener{
     private static final int FIELD_SIZE = 80;
+    private static final int PAWN_OFFSET = 10;
+    private static final int PAWN_SIZE = 60;
     private static final int ROWS = 8;
     private static final int COLUMNS = 8;
-    private Field[][] FIELD = new Field[ROWS][COLUMNS];
-    private Pawn[][] PAWN = new Pawn[ROWS][COLUMNS];
     private String MOVE = "WHITE";
+    private final Pawn[][] PAWN = new Pawn[ROWS][COLUMNS];
+    private int SELECTED_PAWN_X;
+    private int SELECTED_PAWN_Y;
 
-    private static int[][] Positions= {
+    private static final int[][] Positions= {
             {0, 2, 0, 2, 0, 2, 0, 2},
             {2, 0, 2, 0, 2, 0, 2, 0},
             {0, 2, 0, 2, 0, 2, 0, 2},
@@ -22,35 +25,74 @@ public class Board extends JPanel implements MouseListener {
     };
     //0 - banned
     //1 - empty
-    //2 - player 1 - white
-    //3 - player 2 - red
+    //2 - red pawns
+    //3 - white pawns
     public Board() {
         setBounds(180, 180, 640, 640);
-        setBackground(Color.BLUE);
-        setLayout(new GridLayout(ROWS, COLUMNS));
+        setLayout(null);
+        AddPieces();
         addMouseListener(this);
+        addMouseMotionListener(this);
+    }
+    public void paintComponent(Graphics g) {
+        Graphics2D g2d = (Graphics2D) g;
+        PaintFields(g2d);
+        PaintPawns(g2d);
+    }
+    private void PaintFields(Graphics g2d)
+    {
+        for(int i = 0; i < ROWS; i++) {
+            for (int j = 0; j < COLUMNS; j++) {
+                if ((i + j) % 2 == 0) {
+                    g2d.setColor(Color.WHITE);
+                    g2d.fillRect(i * FIELD_SIZE, j * FIELD_SIZE, FIELD_SIZE, FIELD_SIZE);
+                } else {
+                    g2d.setColor(Color.GREEN);
+                    g2d.fillRect(i * FIELD_SIZE, j * FIELD_SIZE, FIELD_SIZE, FIELD_SIZE);
+                }
+            }
+        }
+    }
+    private void PaintPawns(Graphics g2d)
+    {
+        for(int i = 0; i < ROWS; i++) {
+            for (int j = 0; j < COLUMNS; j++) {
+                if (PAWN[i][j] != null)
+                {
+                    if(PAWN[i][j].getCOLOR().equals("RED"))
+                    {
+                        g2d.setColor(Color.RED);
+                        g2d.fillOval(PAWN[i][j].getX() + PAWN_OFFSET, PAWN[i][j].getY() + PAWN_OFFSET, PAWN_SIZE, PAWN_SIZE);
+                    }
+                    else
+                    {
+                        g2d.setColor(Color.WHITE);
+                        g2d.fillOval(PAWN[i][j].getX() + PAWN_OFFSET, PAWN[i][j].getY() + PAWN_OFFSET, PAWN_SIZE, PAWN_SIZE);
+                    }
+                }
+            }
+        }
+    }
+    private void AddPieces()
+    {
         for(int i = 0; i < ROWS; i++)
         {
             for (int j = 0; j < COLUMNS; j++)
             {
-                if ((i + j) % 2 == 0) {
-                    FIELD[i][j] = new Field("WHITE");
-                } else {
-                    FIELD[i][j] = new Field("GREEN");
+                if (j < 3 && (i + j) % 2 == 1)
+                {
+                    PAWN[i][j] = new Pawn("RED", i * FIELD_SIZE, j * FIELD_SIZE);
+                    new Pawn("RED", i, j);
                 }
-
-                if (i < 3 && (i + j) % 2 == 1) {
-                    PAWN[i][j] = new Pawn("RED");
-                    FIELD[i][j].add(PAWN[i][j]);
+                if (j > 4 && (i + j) % 2 == 1) {
+                    PAWN[i][j] = new Pawn("WHITE", i * FIELD_SIZE, j * FIELD_SIZE);
                 }
-
-                if (i > 4 && (i + j) % 2 == 1) {
-                    PAWN[i][j] = new Pawn("WHITE");
-                    FIELD[i][j].add(PAWN[i][j]);
-                }
-                add(FIELD[i][j]);
             }
         }
+    }
+    private void ValidateMove(int x, int y, String type, String color)
+    {
+
     }
     private void ChangeMove()
     {
@@ -62,33 +104,29 @@ public class Board extends JPanel implements MouseListener {
         }
         System.out.println("RUCH: " + MOVE);
     }
+
     @Override
     public void mouseClicked(MouseEvent e) {
-        int x = e.getX() / FIELD_SIZE;
-        int y = e.getY() / FIELD_SIZE;
-        System.out.println("[" + y + " " + x + "]");
-        Pawn selectedPawn = PAWN[y][x];
-        System.out.println("RUCH: " + MOVE);
-        if(selectedPawn != null)
-        {
-            if(selectedPawn.getCOLOR().equals(MOVE)) {
-                System.out.println("Kliknales na pioneczka!!");
-                ChangeMove();
-            }
-            else{
-                System.out.println("Zly pioneczek byniu");
-            }
-        }
     }
 
     @Override
     public void mousePressed(MouseEvent e) {
-
+        SELECTED_PAWN_X = e.getX()/FIELD_SIZE;
+        SELECTED_PAWN_Y = e.getY()/FIELD_SIZE;
     }
 
     @Override
     public void mouseReleased(MouseEvent e) {
+        int x = e.getX()/FIELD_SIZE;
+        int y = e.getY()/FIELD_SIZE;
 
+        PAWN[SELECTED_PAWN_X][SELECTED_PAWN_Y].setX(x * FIELD_SIZE);
+        PAWN[SELECTED_PAWN_X][SELECTED_PAWN_Y].setY(y * FIELD_SIZE);
+
+        PAWN[x][y] = PAWN[SELECTED_PAWN_X][SELECTED_PAWN_Y];
+        PAWN[SELECTED_PAWN_X][SELECTED_PAWN_Y] = null;
+
+        repaint();
     }
 
     @Override
@@ -98,6 +136,19 @@ public class Board extends JPanel implements MouseListener {
 
     @Override
     public void mouseExited(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseDragged(MouseEvent e) {
+
+        PAWN[SELECTED_PAWN_X][SELECTED_PAWN_Y].setX(e.getX());
+        PAWN[SELECTED_PAWN_X][SELECTED_PAWN_Y].setY(e.getY());
+        repaint();
+    }
+
+    @Override
+    public void mouseMoved(MouseEvent e) {
 
     }
 }

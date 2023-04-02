@@ -11,6 +11,7 @@ public class BoardFrame extends JFrame {
         setResizable(false);
         setLayout(null);
         add(new Board());
+        //add(new Pawns());
         setVisible(true);
     }
 }
