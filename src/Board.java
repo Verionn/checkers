@@ -1,7 +1,6 @@
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.util.Objects;
 import java.util.Vector;
 
 public class Board extends JPanel implements MouseListener, MouseMotionListener {
@@ -16,9 +15,8 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
     private int SELECTED_PAWN_X;
     private int SELECTED_PAWN_Y;
     private Vector<Pawn> PossibleCapturesForAllPawns = new Vector<>();
-    private Vector<Point> PossibleCapturesForSpecificPawn = new Vector<>();
-    private Vector<Point> MandatoryMoves = new Vector<>();
-    private Vector<CapturePathClass> AllOptionsOfCapturingForSpecificPawn = new Vector<>();
+    private final Vector<Point> MandatoryMoves = new Vector<>();
+    private final Vector<CapturePathClass> AllOptionsOfCapturingForSpecificPawn = new Vector<>();
 
     private static final int[][] Positions = {
             {0, 2, 0, 2, 0, 2, 0, 2},
@@ -215,20 +213,16 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
         return null;
     }
 
-    private boolean ValidateCapture(Point first, Point second, Pawn[][] CopyOfPawns){
+    private boolean ValidateCapture(Point first, Point second){
         int x1 = first.getX();
         int y1 = first.getY();
         int x2 = second.getX();
         int y2 = second.getY();
 
-        if(PAWN[(y1+y2)/2][(x1+x2)/2] == null)
-        {
-            return false;
-        }
-        return true;
+        return PAWN[(y1 + y2) / 2][(x1 + x2) / 2] != null;
     }
 
-    private VectorInfo ReturnVectorWithSpecficLastPoint(Point CheckedPoint, Pawn[][] CopyOfPawns) {
+    private VectorInfo ReturnVectorWithSpecficLastPoint(Point CheckedPoint) {
         for (int i = 0; i < AllOptionsOfCapturingForSpecificPawn.size(); i++)
         {
             CapturePathClass Path = AllOptionsOfCapturingForSpecificPawn.get(i);
@@ -249,7 +243,7 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
                 Point point = vector.get(j);
                 if(ReturnDistanceBetweenPoints(point, CheckedPoint) == DIFF_BETWEEN_FIELDS)
                 {
-                    if(ValidateCapture(point, CheckedPoint, CopyOfPawns)) { // tutaj jest jakas poprawka do zrobienia wariacie
+                    if(ValidateCapture(point, CheckedPoint)) { // tutaj jest jakas poprawka do zrobienia wariacie
                         return new VectorInfo(i, j);
                     }
                 }
@@ -258,7 +252,7 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
         return new VectorInfo(-1, -1);
     }
 
-    private void CheckIfCaptureCreateNewPath(Point CheckedPoint, Pawn[][] CopyOfPawns) {
+    private void CheckIfCaptureCreateNewPath(Point CheckedPoint) {
         if(AllOptionsOfCapturingForSpecificPawn.size() == 0) {
             Vector<Point> FirstPath = new Vector<>();
             FirstPath.add(CheckedPoint);
@@ -266,7 +260,7 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
             AllOptionsOfCapturingForSpecificPawn.add(Path);
             return;
         }
-        VectorInfo PathIndex = ReturnVectorWithSpecficLastPoint(CheckedPoint, CopyOfPawns);
+        VectorInfo PathIndex = ReturnVectorWithSpecficLastPoint(CheckedPoint);
         if(PathIndex.getI() == -1 && PathIndex.getJ() == -1)
         {
             Vector<Point> NewPath = new Vector<>();
@@ -306,8 +300,7 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
         if(leftTopCorner != null ) {
             if(prevField.getX() != x - 2 || prevField.getY() != y - 2) {
                 Pawn[][] LastCopyOfPawns = CloneArray(CopyOfPawns);
-                PossibleCapturesForSpecificPawn.add(leftTopCorner);
-                CheckIfCaptureCreateNewPath(leftTopCorner, LastCopyOfPawns);
+                CheckIfCaptureCreateNewPath(leftTopCorner);
                 LastCopyOfPawns[y-1][x-1] = null;
                 LastCopyOfPawns[y-2][x-2] = LastCopyOfPawns[y][x];
                 LastCopyOfPawns[y][x] = null;
@@ -319,8 +312,7 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
         if(rightTopCorner != null ) {
             if(prevField.getX() != x + 2 || prevField.getY() != y - 2) {
                 Pawn[][] LastCopyOfPawns = CloneArray(CopyOfPawns);
-                PossibleCapturesForSpecificPawn.add(rightTopCorner);
-                CheckIfCaptureCreateNewPath(rightTopCorner, LastCopyOfPawns);
+                CheckIfCaptureCreateNewPath(rightTopCorner);
                 LastCopyOfPawns[y-1][x+1] = null;
                 LastCopyOfPawns[y-2][x+2] = LastCopyOfPawns[y][x];
                 LastCopyOfPawns[y][x] = null;
@@ -332,8 +324,7 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
         if(leftBottomCorner != null) {
             if(prevField.getX() != x - 2 || prevField.getY() != y + 2) {
                 Pawn[][] LastCopyOfPawns = CloneArray(CopyOfPawns);
-                PossibleCapturesForSpecificPawn.add(leftBottomCorner);
-                CheckIfCaptureCreateNewPath(leftBottomCorner, LastCopyOfPawns);
+                CheckIfCaptureCreateNewPath(leftBottomCorner);
                 LastCopyOfPawns[y+1][x-1] = null;
                 LastCopyOfPawns[y+2][x-2] = LastCopyOfPawns[y][x];
                 LastCopyOfPawns[y][x] = null;
@@ -345,8 +336,7 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
         if(rightBottomCorner != null) {
             if(prevField.getX() != x + 2 || prevField.getY() != y + 2) {
                 Pawn[][] LastCopyOfPawns = CloneArray(CopyOfPawns);
-                PossibleCapturesForSpecificPawn.add(rightBottomCorner);
-                CheckIfCaptureCreateNewPath(rightBottomCorner, LastCopyOfPawns);
+                CheckIfCaptureCreateNewPath(rightBottomCorner);
                 LastCopyOfPawns[y+1][x+1] = null;
                 LastCopyOfPawns[y+2][x+2] = LastCopyOfPawns[y][x];
                 LastCopyOfPawns[y][x] = null;
@@ -442,22 +432,16 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
     public void mouseClicked(MouseEvent e) {
         int x = e.getX() / FIELD_SIZE;
         int y = e.getY() / FIELD_SIZE;
-        PossibleCapturesForSpecificPawn.clear();
 
         Pawn[][] CopyOfPawns = CloneArray(PAWN);
         ReturnCapturesOfSpecificPawn(PAWN[y][x], new Point(x, y), CopyOfPawns);
         System.out.println("Mozliwe bicia dla " + PAWN[y][x].getColor() + " | " + x + " | " + y);
-        for (int i = 0; i < AllOptionsOfCapturingForSpecificPawn.size(); i++)
-        {
-            CapturePathClass Path = AllOptionsOfCapturingForSpecificPawn.get(i);
+        for (CapturePathClass Path : AllOptionsOfCapturingForSpecificPawn) {
             Vector<Point> vector = Path.getPath();
-            if(!Path.isFinished())
-            {
+            if (!Path.isFinished()) {
                 continue;
             }
-            for (int j = 0; j < vector.size(); j++)
-            {
-                Point point = vector.get(j);
+            for (Point point : vector) {
                 System.out.println(point.getX() + " | " + point.getY());
             }
             System.out.println("Lub");
