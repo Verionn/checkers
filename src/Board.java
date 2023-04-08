@@ -5,18 +5,22 @@ import java.util.Vector;
 
 public class Board extends JPanel implements MouseListener, MouseMotionListener {
     private static final int FIELD_SIZE = 80;
-    private static final int PAWN_OFFSET = 10;
-    private final double DIFF_BETWEEN_FIELDS = ReturnDistanceBetweenPoints(new Point(2,2), new Point(4,4));
     private static final int PAWN_SIZE = 60;
+    private static final int PAWN_OFFSET = 10;
+    private static final int SMALL_PAWN_SIZE = 20;
+    private static final int SMALL_PAWN_OFFSET = 30;
+    private static final int QUEEN_SIZE = 30;
+    private static final int QUEEN_OFFSET = 25;
     private static final int ROWS = 8;
     private static final int COLUMNS = 8;
     private String MOVE = "WHITE";
-    private final Pawn[][] PAWN = new Pawn[ROWS][COLUMNS];
+    private final double DIFF_BETWEEN_FIELDS = ReturnDistanceBetweenPoints(new Point(2, 2), new Point(4, 4));
     private int SELECTED_PAWN_X;
     private int SELECTED_PAWN_Y;
-    private Vector<Pawn> PossibleCapturesForAllPawns = new Vector<>();
-    private final Vector<Point> MandatoryMoves = new Vector<>();
+    private final Pawn[][] PAWN = new Pawn[ROWS][COLUMNS];
+    private final Vector<Pawn> PawnsWhichCanCapture = new Vector<>();
     private final Vector<CapturePathClass> AllOptionsOfCapturingForSpecificPawn = new Vector<>();
+    private final Vector<CapturePathClass> MandatoryMoves = new Vector<>();
 
     private static final int[][] Positions = {
             {0, 2, 0, 2, 0, 2, 0, 2},
@@ -64,13 +68,35 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
     private void PaintPawns(Graphics g2d) {
         for (int i = 0; i < ROWS; i++) {
             for (int j = 0; j < COLUMNS; j++) {
-                if (PAWN[i][j] != null) {
-                    if (PAWN[i][j].getColor().equals("RED")) {
-                        g2d.setColor(Color.RED);
-                        g2d.fillOval(PAWN[i][j].getX() + PAWN_OFFSET, PAWN[i][j].getY() + PAWN_OFFSET, PAWN_SIZE, PAWN_SIZE);
-                    } else {
-                        g2d.setColor(Color.WHITE);
-                        g2d.fillOval(PAWN[i][j].getX() + PAWN_OFFSET, PAWN[i][j].getY() + PAWN_OFFSET, PAWN_SIZE, PAWN_SIZE);
+                if (PAWN[i][j] != null)
+                {
+                    if(!PAWN[i][j].isQueen()) {
+                        if (PAWN[i][j].getColor().equals("RED")) {
+                            g2d.setColor(Color.RED);
+                            g2d.fillOval(PAWN[i][j].getX() + PAWN_OFFSET, PAWN[i][j].getY() + PAWN_OFFSET, PAWN_SIZE, PAWN_SIZE);
+                        } else {
+                            g2d.setColor(Color.WHITE);
+                            g2d.fillOval(PAWN[i][j].getX() + PAWN_OFFSET, PAWN[i][j].getY() + PAWN_OFFSET, PAWN_SIZE, PAWN_SIZE);
+                        }
+                    }
+                    else
+                    {
+                        if (PAWN[i][j].getColor().equals("RED")) {
+                            g2d.setColor(Color.RED);
+                            g2d.fillOval(PAWN[i][j].getX() + PAWN_OFFSET, PAWN[i][j].getY() + PAWN_OFFSET, PAWN_SIZE, PAWN_SIZE);
+                            g2d.setColor(Color.WHITE);
+                            g2d.fillOval(PAWN[i][j].getX() + QUEEN_OFFSET , PAWN[i][j].getY() + QUEEN_OFFSET, SMALL_PAWN_OFFSET, SMALL_PAWN_OFFSET);
+                            g2d.setColor(Color.RED);
+                            g2d.fillOval(PAWN[i][j].getX() + SMALL_PAWN_OFFSET , PAWN[i][j].getY() + SMALL_PAWN_OFFSET, SMALL_PAWN_SIZE, SMALL_PAWN_SIZE);
+                        } else {
+                            g2d.setColor(Color.WHITE);
+                            g2d.fillOval(PAWN[i][j].getX() + PAWN_OFFSET, PAWN[i][j].getY() + PAWN_OFFSET, PAWN_SIZE, PAWN_SIZE);
+                            g2d.setColor(Color.RED);
+                            g2d.fillOval(PAWN[i][j].getX() + QUEEN_OFFSET , PAWN[i][j].getY() + QUEEN_OFFSET, SMALL_PAWN_OFFSET, SMALL_PAWN_OFFSET);
+                            g2d.setColor(Color.WHITE);
+                            g2d.fillOval(PAWN[i][j].getX() + SMALL_PAWN_OFFSET , PAWN[i][j].getY() + SMALL_PAWN_OFFSET, SMALL_PAWN_SIZE, SMALL_PAWN_SIZE);
+
+                        }
                     }
                 }
             }
@@ -88,6 +114,13 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
                 }
             }
         }
+    }
+
+    private void UpdateMandatoryMoves()
+    {
+        CapturePathClass Path = MandatoryMoves.lastElement();
+        MandatoryMoves.clear();
+        MandatoryMoves.add(Path);
     }
 
     private boolean ValidateMove(int x, int y, Pawn pawn) {
@@ -111,6 +144,33 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
             System.out.println("Ruch w te samo miejsce");
             return false;
         }
+        if(MandatoryMoves.size() != 0) {
+            for (int i = 0; i < MandatoryMoves.size(); i++) {
+                CapturePathClass Path = MandatoryMoves.get(i);
+                Vector<Point> CapturePath = Path.getPath();
+                for (int j = 0; j < CapturePath.size(); j++)
+                {
+                    Point point = CapturePath.get(j);
+                    if(point.getX() == x && point.getY() == y)
+                    {
+                        CapturePath.remove(j);
+                        Path.setPath(CapturePath);
+                        MandatoryMoves.remove(i);
+                        MandatoryMoves.add(Path);
+
+                        PAWN[(SELECTED_PAWN_Y + point.getY())/2][(SELECTED_PAWN_X + point.getX())/2] = null;
+
+                        if(MandatoryMoves.size() > 1) {
+                            UpdateMandatoryMoves();
+                        }
+
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
         if (pawn.getColor().equals("RED") && !pawn.isQueen()) {
             if (SELECTED_PAWN_Y >= y) {
                 System.out.println("Ruch do tylu lub w bok pionem czerwonym");
@@ -137,8 +197,7 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
         return true;
     }
 
-    private Vector<Pawn> CheckCaptures(String color) {
-        Vector<Pawn> pawns = new Vector<>();
+    private void CheckCaptures(String color) {
         for (int i = 0; i < COLUMNS; i++) {
             for (int j = 0; j < ROWS; j++) {
                 if (PAWN[i][j] != null) {
@@ -147,52 +206,42 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
                             System.out.println("Jestem damka");
                         } else {
                             if (CheckIfPawnCanCapture(PAWN[i][j], PAWN)) {
-                                pawns.add(PAWN[i][j]);
+                                PawnsWhichCanCapture.add(PAWN[i][j]);
                             }
                         }
                     }
                 }
             }
         }
-        return pawns;
     }
 
-    private Point CheckLeftBottomCorner(Pawn pawn, int x, int y, Pawn[][] Pawn){
-        if(x-1 >= 0 && y+1 <= 7 && Pawn[y+1][x-1] != null)
-        {
-            if(!Pawn[y+1][x-1].getColor().equals(pawn.getColor()))
-            {
-                if(x-2 >= 0 && y+2 <= 7 && Pawn[y+2][x-2] == null)
-                {
-                    return new Point(x-2, y+2);
+    private Point CheckLeftBottomCorner(Pawn pawn, int x, int y, Pawn[][] Pawn) {
+        if (x - 1 >= 0 && y + 1 <= 7 && Pawn[y + 1][x - 1] != null) {
+            if (!Pawn[y + 1][x - 1].getColor().equals(pawn.getColor())) {
+                if (x - 2 >= 0 && y + 2 <= 7 && Pawn[y + 2][x - 2] == null) {
+                    return new Point(x - 2, y + 2);
                 }
             }
         }
         return null;
     }
 
-    private Point CheckRightBottomCorner(Pawn pawn, int x, int y, Pawn[][] Pawn){
-        if(x+1 <= 7 && y+1 <= 7 && Pawn[y+1][x+1] != null)
-        {
-            if(!Pawn[y+1][x+1].getColor().equals(pawn.getColor()))
-            {
-                if(x+2 <= 7 && y+2 <= 7 && Pawn[y+2][x+2] == null)
-                {
-                    return new Point(x+2, y+2);
+    private Point CheckRightBottomCorner(Pawn pawn, int x, int y, Pawn[][] Pawn) {
+        if (x + 1 <= 7 && y + 1 <= 7 && Pawn[y + 1][x + 1] != null) {
+            if (!Pawn[y + 1][x + 1].getColor().equals(pawn.getColor())) {
+                if (x + 2 <= 7 && y + 2 <= 7 && Pawn[y + 2][x + 2] == null) {
+                    return new Point(x + 2, y + 2);
                 }
             }
         }
         return null;
     }
 
-    private Point CheckLeftTopCorner(Pawn pawn, int x, int y, Pawn[][] Pawn){
-        if(y-1 >= 0 && x-1 >= 0 &&  Pawn[y-1][x-1] != null)
-        {
-            if(!Pawn[y-1][x-1].getColor().equals(pawn.getColor()))
-            {
-                if(x-2 >= 0 && y-2 >= 0 && Pawn[y-2][x-2] == null)
-                {
-                    return new Point(x-2, y-2);
+    private Point CheckLeftTopCorner(Pawn pawn, int x, int y, Pawn[][] Pawn) {
+        if (y - 1 >= 0 && x - 1 >= 0 && Pawn[y - 1][x - 1] != null) {
+            if (!Pawn[y - 1][x - 1].getColor().equals(pawn.getColor())) {
+                if (x - 2 >= 0 && y - 2 >= 0 && Pawn[y - 2][x - 2] == null) {
+                    return new Point(x - 2, y - 2);
                 }
             }
         }
@@ -200,20 +249,17 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
     }
 
     private Point CheckRightTopCorner(Pawn pawn, int x, int y, Pawn[][] Pawn) {
-        if(x+1 <= 7 && y-1 >= 0 && Pawn[y-1][x+1] != null)
-        {
-            if(!Pawn[y-1][x+1].getColor().equals(pawn.getColor()))
-            {
-                if(x+2 <= 7 && y-2 >= 0 && Pawn[y-2][x+2] == null)
-                {
-                    return new Point(x+2, y-2);
+        if (x + 1 <= 7 && y - 1 >= 0 && Pawn[y - 1][x + 1] != null) {
+            if (!Pawn[y - 1][x + 1].getColor().equals(pawn.getColor())) {
+                if (x + 2 <= 7 && y - 2 >= 0 && Pawn[y - 2][x + 2] == null) {
+                    return new Point(x + 2, y - 2);
                 }
             }
         }
         return null;
     }
 
-    private boolean ValidateCapture(Point first, Point second){
+    private boolean ValidateCapture(Point first, Point second) {
         int x1 = first.getX();
         int y1 = first.getY();
         int x2 = second.getX();
@@ -223,11 +269,9 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
     }
 
     private VectorInfo ReturnVectorWithSpecficLastPoint(Point CheckedPoint) {
-        for (int i = 0; i < AllOptionsOfCapturingForSpecificPawn.size(); i++)
-        {
+        for (int i = 0; i < AllOptionsOfCapturingForSpecificPawn.size(); i++) {
             CapturePathClass Path = AllOptionsOfCapturingForSpecificPawn.get(i);
-            if(Path.isFinished())
-            {
+            if (Path.isFinished()) {
                 continue;
             }
             Point LastPoint = Path.getPath().lastElement();
@@ -235,15 +279,13 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
                 return new VectorInfo(i, -1);
             }
         }
-        for (int i = 0; i < AllOptionsOfCapturingForSpecificPawn.size(); i++)
-        {
+        for (int i = 0; i < AllOptionsOfCapturingForSpecificPawn.size(); i++) {
             CapturePathClass Path = AllOptionsOfCapturingForSpecificPawn.get(i);
             Vector<Point> vector = Path.getPath();
-            for (int j = 0; j < vector.size()-1; j++) {
+            for (int j = 0; j < vector.size() - 1; j++) {
                 Point point = vector.get(j);
-                if(ReturnDistanceBetweenPoints(point, CheckedPoint) == DIFF_BETWEEN_FIELDS)
-                {
-                    if(ValidateCapture(point, CheckedPoint)) { // tutaj jest jakas poprawka do zrobienia wariacie
+                if (ReturnDistanceBetweenPoints(point, CheckedPoint) == DIFF_BETWEEN_FIELDS) {
+                    if (ValidateCapture(point, CheckedPoint)) { // tutaj jest jakas poprawka do zrobienia wariacie
                         return new VectorInfo(i, j);
                     }
                 }
@@ -253,36 +295,33 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
     }
 
     private void CheckIfCaptureCreateNewPath(Point CheckedPoint) {
-        if(AllOptionsOfCapturingForSpecificPawn.size() == 0) {
+        if (AllOptionsOfCapturingForSpecificPawn.size() == 0) {
             Vector<Point> FirstPath = new Vector<>();
             FirstPath.add(CheckedPoint);
             CapturePathClass Path = new CapturePathClass(FirstPath, false);
             AllOptionsOfCapturingForSpecificPawn.add(Path);
             return;
         }
+
         VectorInfo PathIndex = ReturnVectorWithSpecficLastPoint(CheckedPoint);
-        if(PathIndex.getI() == -1 && PathIndex.getJ() == -1)
-        {
+        if (PathIndex.getI() == -1 && PathIndex.getJ() == -1) {
             Vector<Point> NewPath = new Vector<>();
             NewPath.add(CheckedPoint);
             CapturePathClass Path = new CapturePathClass(NewPath, false);
             AllOptionsOfCapturingForSpecificPawn.add(Path);
         }
-        else if(PathIndex.getI() >= 0 && PathIndex.getJ() == -1)
-        {
+        else if (PathIndex.getI() >= 0 && PathIndex.getJ() == -1) {
             CapturePathClass Path = AllOptionsOfCapturingForSpecificPawn.get(PathIndex.getI());
             Vector<Point> FoundPath = Path.getPath();
             FoundPath.add(CheckedPoint);
             AllOptionsOfCapturingForSpecificPawn.remove(PathIndex.getI());
             AllOptionsOfCapturingForSpecificPawn.add(Path);
         }
-        else if(PathIndex.getI() >= 0 && PathIndex.getJ() >= 0)
-        {
+        else if (PathIndex.getI() >= 0 && PathIndex.getJ() >= 0) {
             CapturePathClass Path = AllOptionsOfCapturingForSpecificPawn.get(PathIndex.getI());
             Vector<Point> FoundPath = Path.getPath();
             Vector<Point> NewPath = new Vector<>();
-            for (int i = 0; i <= PathIndex.getJ(); i++)
-            {
+            for (int i = 0; i <= PathIndex.getJ(); i++) {
                 NewPath.add(FoundPath.get(i));
             }
             NewPath.add(CheckedPoint);
@@ -297,60 +336,58 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
         int y = pawn.getY() / FIELD_SIZE;
 
         Point leftTopCorner = CheckLeftTopCorner(pawn, x, y, CopyOfPawns);
-        if(leftTopCorner != null ) {
-            if(prevField.getX() != x - 2 || prevField.getY() != y - 2) {
+        if (leftTopCorner != null) {
+            if (prevField.getX() != x - 2 || prevField.getY() != y - 2) {
                 Pawn[][] LastCopyOfPawns = CloneArray(CopyOfPawns);
                 CheckIfCaptureCreateNewPath(leftTopCorner);
-                LastCopyOfPawns[y-1][x-1] = null;
-                LastCopyOfPawns[y-2][x-2] = LastCopyOfPawns[y][x];
+                LastCopyOfPawns[y - 1][x - 1] = null;
+                LastCopyOfPawns[y - 2][x - 2] = LastCopyOfPawns[y][x];
                 LastCopyOfPawns[y][x] = null;
-                ReturnCapturesOfSpecificPawn(new Pawn(pawn.getColor(),x * FIELD_SIZE - 2 * FIELD_SIZE, y * FIELD_SIZE - 2 * FIELD_SIZE), new Point(x, y), LastCopyOfPawns);
+                ReturnCapturesOfSpecificPawn(new Pawn(pawn.getColor(), x * FIELD_SIZE - 2 * FIELD_SIZE, y * FIELD_SIZE - 2 * FIELD_SIZE), new Point(x, y), LastCopyOfPawns);
             }
         }
 
         Point rightTopCorner = CheckRightTopCorner(pawn, x, y, CopyOfPawns);
-        if(rightTopCorner != null ) {
-            if(prevField.getX() != x + 2 || prevField.getY() != y - 2) {
+        if (rightTopCorner != null) {
+            if (prevField.getX() != x + 2 || prevField.getY() != y - 2) {
                 Pawn[][] LastCopyOfPawns = CloneArray(CopyOfPawns);
                 CheckIfCaptureCreateNewPath(rightTopCorner);
-                LastCopyOfPawns[y-1][x+1] = null;
-                LastCopyOfPawns[y-2][x+2] = LastCopyOfPawns[y][x];
+                LastCopyOfPawns[y - 1][x + 1] = null;
+                LastCopyOfPawns[y - 2][x + 2] = LastCopyOfPawns[y][x];
                 LastCopyOfPawns[y][x] = null;
-                ReturnCapturesOfSpecificPawn(new Pawn(pawn.getColor(),x * FIELD_SIZE + 2 * FIELD_SIZE, y * FIELD_SIZE - 2 * FIELD_SIZE), new Point(x, y), LastCopyOfPawns);
+                ReturnCapturesOfSpecificPawn(new Pawn(pawn.getColor(), x * FIELD_SIZE + 2 * FIELD_SIZE, y * FIELD_SIZE - 2 * FIELD_SIZE), new Point(x, y), LastCopyOfPawns);
             }
         }
 
         Point leftBottomCorner = CheckLeftBottomCorner(pawn, x, y, CopyOfPawns);
-        if(leftBottomCorner != null) {
-            if(prevField.getX() != x - 2 || prevField.getY() != y + 2) {
+        if (leftBottomCorner != null) {
+            if (prevField.getX() != x - 2 || prevField.getY() != y + 2) {
                 Pawn[][] LastCopyOfPawns = CloneArray(CopyOfPawns);
                 CheckIfCaptureCreateNewPath(leftBottomCorner);
-                LastCopyOfPawns[y+1][x-1] = null;
-                LastCopyOfPawns[y+2][x-2] = LastCopyOfPawns[y][x];
+                LastCopyOfPawns[y + 1][x - 1] = null;
+                LastCopyOfPawns[y + 2][x - 2] = LastCopyOfPawns[y][x];
                 LastCopyOfPawns[y][x] = null;
-                ReturnCapturesOfSpecificPawn(new Pawn(pawn.getColor(),x * FIELD_SIZE - 2 * FIELD_SIZE, y * FIELD_SIZE + 2 * FIELD_SIZE), new Point(x, y), LastCopyOfPawns);
+                ReturnCapturesOfSpecificPawn(new Pawn(pawn.getColor(), x * FIELD_SIZE - 2 * FIELD_SIZE, y * FIELD_SIZE + 2 * FIELD_SIZE), new Point(x, y), LastCopyOfPawns);
             }
         }
 
         Point rightBottomCorner = CheckRightBottomCorner(pawn, x, y, CopyOfPawns);
-        if(rightBottomCorner != null) {
-            if(prevField.getX() != x + 2 || prevField.getY() != y + 2) {
+        if (rightBottomCorner != null) {
+            if (prevField.getX() != x + 2 || prevField.getY() != y + 2) {
                 Pawn[][] LastCopyOfPawns = CloneArray(CopyOfPawns);
                 CheckIfCaptureCreateNewPath(rightBottomCorner);
-                LastCopyOfPawns[y+1][x+1] = null;
-                LastCopyOfPawns[y+2][x+2] = LastCopyOfPawns[y][x];
+                LastCopyOfPawns[y + 1][x + 1] = null;
+                LastCopyOfPawns[y + 2][x + 2] = LastCopyOfPawns[y][x];
                 LastCopyOfPawns[y][x] = null;
-                ReturnCapturesOfSpecificPawn(new Pawn(pawn.getColor(),x * FIELD_SIZE + 2 * FIELD_SIZE, y * FIELD_SIZE + 2 * FIELD_SIZE), new Point(x, y), LastCopyOfPawns);
+                ReturnCapturesOfSpecificPawn(new Pawn(pawn.getColor(), x * FIELD_SIZE + 2 * FIELD_SIZE, y * FIELD_SIZE + 2 * FIELD_SIZE), new Point(x, y), LastCopyOfPawns);
             }
         }
-        if(!CheckIfPawnCanCapture(pawn, CopyOfPawns))
-        {
-            for (int i = 0 ; i < AllOptionsOfCapturingForSpecificPawn.size(); i++){
+        if (!CheckIfPawnCanCapture(pawn, CopyOfPawns)) {
+            for (int i = 0; i < AllOptionsOfCapturingForSpecificPawn.size(); i++) {
                 CapturePathClass Path = AllOptionsOfCapturingForSpecificPawn.get(i);
                 Vector<Point> CapturePath = Path.getPath();
                 Point LastPoint = CapturePath.lastElement();
-                if(LastPoint.getY() == y && LastPoint.getX() == x)
-                {
+                if (LastPoint.getY() == y && LastPoint.getX() == x) {
                     Path.setFinished(true);
                     AllOptionsOfCapturingForSpecificPawn.remove(i);
                     AllOptionsOfCapturingForSpecificPawn.add(Path);
@@ -363,19 +400,16 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
         int y = pawn.getY() / FIELD_SIZE;
         int x = pawn.getX() / FIELD_SIZE;
 
-        if(pawn.isQueen())
-        {
+        if (pawn.isQueen()) {
             System.out.println("Jestem damka");
-        }
-        else
-        {
-            if(CheckLeftTopCorner(pawn, x, y, CopyOfPawns) != null) {
+        } else {
+            if (CheckLeftTopCorner(pawn, x, y, CopyOfPawns) != null) {
                 return true;
             }
-            if(CheckRightTopCorner(pawn, x, y, CopyOfPawns) != null) {
+            if (CheckRightTopCorner(pawn, x, y, CopyOfPawns) != null) {
                 return true;
             }
-            if(CheckLeftBottomCorner(pawn, x, y, CopyOfPawns) != null) {
+            if (CheckLeftBottomCorner(pawn, x, y, CopyOfPawns) != null) {
                 return true;
             }
             return CheckRightBottomCorner(pawn, x, y, CopyOfPawns) != null;
@@ -384,36 +418,26 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
     }
 
     private void ChangeMove() {
-        if(MOVE.equals("WHITE")) {
+
+        if(MandatoryMoves.size() != 0  &&  MandatoryMoves.get(0).getPath().size() != 0)
+        {
+            System.out.println("RUCH: " + MOVE);
+            return;
+        }
+        if (MOVE.equals("WHITE")) {
             MOVE = "RED";
         }
         else {
             MOVE = "WHITE";
         }
+        MandatoryMoves.clear();
         System.out.println("RUCH: " + MOVE);
     }
 
-    private void PrintPawnsThatCanCapture() {
-        System.out.println("Pionki ktore moga bic koloru: " + MOVE);
-        PossibleCapturesForAllPawns = CheckCaptures(MOVE);
-        if(PossibleCapturesForAllPawns.size() == 0)
-        {
-            System.out.println("Brak opcji bicia");
-        }
-        else
-        {
-            for (Pawn possibleCapturesForAllPawn : PossibleCapturesForAllPawns) {
-                System.out.println(possibleCapturesForAllPawn.getX() / FIELD_SIZE + " | " + possibleCapturesForAllPawn.getY() / FIELD_SIZE);
-            }
-            System.out.println("===============================================");
-        }
-    }
-
-    private Pawn[][] CloneArray(Pawn [][] PawnsToClone) {
+    private Pawn[][] CloneArray(Pawn[][] PawnsToClone) {
         Pawn[][] pawns = new Pawn[ROWS][COLUMNS];
 
-        for (int i = 0; i < COLUMNS; i++)
-        {
+        for (int i = 0; i < COLUMNS; i++) {
             System.arraycopy(PawnsToClone[i], 0, pawns[i], 0, COLUMNS);
         }
 
@@ -428,26 +452,18 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
         return Math.sqrt((y2 - y1) * (y2 - y1) + (x2 - x1) * (x2 - x1));
     }
 
-    @Override
-    public void mouseClicked(MouseEvent e) {
-        int x = e.getX() / FIELD_SIZE;
-        int y = e.getY() / FIELD_SIZE;
-
-        Pawn[][] CopyOfPawns = CloneArray(PAWN);
-        ReturnCapturesOfSpecificPawn(PAWN[y][x], new Point(x, y), CopyOfPawns);
-        System.out.println("Mozliwe bicia dla " + PAWN[y][x].getColor() + " | " + x + " | " + y);
+    private int ReturnSizeOfTheLongestCapturePath() {
+        int max = 0;
         for (CapturePathClass Path : AllOptionsOfCapturingForSpecificPawn) {
-            Vector<Point> vector = Path.getPath();
-            if (!Path.isFinished()) {
-                continue;
+            if (Path.getPath().size() > max) {
+                max = Path.getPath().size();
             }
-            for (Point point : vector) {
-                System.out.println(point.getX() + " | " + point.getY());
-            }
-            System.out.println("Lub");
         }
-        AllOptionsOfCapturingForSpecificPawn.clear();
+        return max;
     }
+
+    @Override
+    public void mouseClicked(MouseEvent e) {}
 
     @Override
     public void mousePressed(MouseEvent e) {
@@ -455,10 +471,31 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
         int y = e.getY()/FIELD_SIZE;
         if(PAWN[y][x] != null)
         {
-            System.out.println("Zlapalem piona: " + PAWN[y][x].getColor() + " " + x + " | " + y);
             SELECTED_PAWN_Y = y;
             SELECTED_PAWN_X = x;
         }
+    }
+    private void ReturnCapturePath() {
+
+        Pawn[][] CopyOfPawns = CloneArray(PAWN);
+
+
+        for (Pawn pawn : PawnsWhichCanCapture) {
+            ReturnCapturesOfSpecificPawn(pawn, new Point(pawn.getX(), pawn.getY()), CopyOfPawns);
+        }
+        int Max = ReturnSizeOfTheLongestCapturePath();
+
+        for (CapturePathClass Path : AllOptionsOfCapturingForSpecificPawn) {
+            Vector<Point> Moves = Path.getPath();
+            if (Moves.size() == Max) {
+                MandatoryMoves.add(Path);
+                for (Point pkt : Moves) {
+                    System.out.println(pkt.getX() + " | " + pkt.getY());
+                }
+                System.out.println("===================================");
+            }
+        }
+        AllOptionsOfCapturingForSpecificPawn.clear();
     }
 
     @Override
@@ -474,15 +511,22 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
             PAWN[y][x] = PAWN[SELECTED_PAWN_Y][SELECTED_PAWN_X];
             PAWN[SELECTED_PAWN_Y][SELECTED_PAWN_X] = null;
             ChangeMove();
-            PrintPawnsThatCanCapture();
+            CheckCaptures(MOVE);
+            if(PawnsWhichCanCapture.size() != 0) {
+                ReturnCapturePath();
+            }
+
         }
         else
         {
             PAWN[SELECTED_PAWN_Y][SELECTED_PAWN_X].setX(SELECTED_PAWN_X * FIELD_SIZE);
             PAWN[SELECTED_PAWN_Y][SELECTED_PAWN_X].setY(SELECTED_PAWN_Y * FIELD_SIZE);
         }
+        if(PAWN[y][x] != null) {
+            PAWN[y][x].CheckUpgrade();
+        }
         repaint();
-        PossibleCapturesForAllPawns.clear();
+        PawnsWhichCanCapture.clear();
     }
 
     @Override

@@ -10,7 +10,7 @@ public class Pawn{
 
     /*private static final ImageIcon RedPawn = new ImageIcon(RED_PAWN_IMAGE_PATH);
     private static final ImageIcon WhitePawn = new ImageIcon(WHITE_PAWN_IMAGE_PATH);*/
-    private final static boolean IsQueen = false;
+    private boolean IsQueen = false;
     private int X;
     private int Y;
 
@@ -19,6 +19,10 @@ public class Pawn{
         X = x;
         Y = y;
         Color = color;
+    }
+
+    public void setQueen(boolean queen) {
+        IsQueen = queen;
     }
 
     public int getX() {
@@ -43,5 +47,23 @@ public class Pawn{
 
     public boolean isQueen() {
         return IsQueen;
+    }
+
+    public void CheckUpgrade()
+    {
+        if(Color.equals("RED"))
+        {
+            if(Y == 7)
+            {
+                IsQueen = true;
+            }
+        }
+        else
+        {
+            if(Y == 0)
+            {
+                IsQueen = true;
+            }
+        }
     }
 }
