@@ -8,7 +8,7 @@ public class BoardFrame extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(WINDOW_WIDTH, WINDOW_HEIGHT);
         setTitle("Checkers");
-        setResizable(false);
+        setResizable(false);;
         setLayout(null);
         add(new Board());
         setVisible(true);
