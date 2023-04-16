@@ -1,12 +1,14 @@
 import java.util.Vector;
 
-public class CapturePathClass {
+public class CapturePath {
     private Vector<Point> Path = new Vector<>();
+    private Point StartingPoint;
     private boolean finished;
 
-    public CapturePathClass(Vector<Point> path, boolean finished) {
+    public CapturePath(Vector<Point> path, boolean finished, Point point) {
         Path = path;
         this.finished = finished;
+        StartingPoint = point;
     }
 
     public void setPath(Vector<Point> path) {
@@ -19,6 +21,14 @@ public class CapturePathClass {
 
     public Vector<Point> getPath() {
         return Path;
+    }
+
+    public void setStartingPoint(Point startingPoint) {
+        StartingPoint = startingPoint;
+    }
+
+    public Point getStartingPoint() {
+        return StartingPoint;
     }
 
     public boolean isFinished() {
