@@ -1,5 +1,4 @@
 import javax.swing.*;
-import java.awt.*;
 
 public class BoardFrame extends JFrame {
     private static final int WINDOW_HEIGHT = 1000;
