@@ -119,10 +119,6 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
                 }
             }
         }
-        /*PAWN[3][4] = new Pawn("RED", 4 * FIELD_SIZE, 3 * FIELD_SIZE, false);
-        PAWN[4][5] = new Pawn("RED", 5 * FIELD_SIZE, 4 * FIELD_SIZE, false);
-        PAWN[4][1] = new Pawn("RED", 1 * FIELD_SIZE, 4 * FIELD_SIZE, false);
-        PAWN[7][6] = new Pawn("WHITE", 6 * FIELD_SIZE, 7 * FIELD_SIZE, true);*/
     }
 
     private void UpdateMandatoryMoves() {
@@ -132,8 +128,7 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
     }
 
     private void SubtractPiece() {
-        if(BoardFrame.MOVE.equals("RED"))
-        {
+        if(BoardFrame.MOVE.equals("RED")) {
             WHITE_PAWNS--;
         }
         else{
@@ -526,46 +521,45 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
         Vector<Point> PossibleMoves = new Vector<>();
         Vector<Point> Moves = new Vector<>();
 
+        label:
         for(int i = 0; i < 7; i++) {
-            if(direction.equals("LeftTop")) {
-                if (y - i >= 0 && x - i >= 0) {
-                    if (Pawn[y - i][x - i] == null) {
-                        Moves.add(new Point(x-i, y-i));
+            switch (direction) {
+                case "LeftTop":
+                    if (y - i >= 0 && x - i >= 0) {
+                        if (Pawn[y - i][x - i] == null) {
+                            Moves.add(new Point(x - i, y - i));
+                        } else {
+                            break label;
+                        }
                     }
-                    else {
-                        break;
+                    break;
+                case "RightTop":
+                    if (y - i >= 0 && x + i <= 7) {
+                        if (Pawn[y - i][x + i] == null) {
+                            Moves.add(new Point(x + i, y - i));
+                        } else {
+                            break label;
+                        }
                     }
-                }
-            }
-            else if(direction.equals("RightTop")) {
-                if (y - i >= 0 && x + i <= 7) {
-                    if (Pawn[y - i][x + i] == null) {
-                        Moves.add(new Point(x+i, y-i));
+                    break;
+                case "LeftBottom":
+                    if (y + i <= 7 && x - i >= 0) {
+                        if (Pawn[y + i][x - i] == null) {
+                            Moves.add(new Point(x - i, y + i));
+                        } else {
+                            break label;
+                        }
                     }
-                    else {
-                        break;
+                    break;
+                default:
+                    if (y + i <= 7 && x + i <= 7) {
+                        if (Pawn[y + i][x + i] == null) {
+                            Moves.add(new Point(x + i, y + i));
+                        } else {
+                            break label;
+                        }
                     }
-                }
-            }
-            else if(direction.equals("LeftBottom")) {
-                if (y + i <= 7 && x - i >= 0) {
-                    if (Pawn[y + i][x - i] == null) {
-                        Moves.add(new Point(x-i, y+i));
-                    }
-                    else{
-                        break;
-                    }
-                }
-            }
-            else {
-                if (y + i <= 7 && x + i <= 7) {
-                    if (Pawn[y + i][x + i] == null) {
-                        Moves.add(new Point(x+i, y+i));
-                    }
-                    else {
-                        break;
-                    }
-                }
+                    break;
             }
         }
 
@@ -826,9 +820,30 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
 
     private void CheckIfTheGameHasBeenEnded()
     {
-        if(WHITE_PAWNS == 0 || RED_PAWNS == 0)
+        if(BoardFrame.GAME) {
+            if (WHITE_PAWNS == 0) {
+                BoardFrame.WINNER = "RED";
+                BoardFrame.GAME = false;
+                System.out.println("KONIEC GRY ZWYCIESTWO BIALYCH");
+            } else if (RED_PAWNS == 0) {
+                BoardFrame.WINNER = "WHITE";
+                BoardFrame.GAME = false;
+                System.out.println("KONIEC GRY - ZWYCIESTWO CZERWONYCH");
+            }
+        }
+        else
         {
-            System.out.println("KONIEC GRY\n ZARA SIE COS Z TYM ZROBI");
+            if (WHITE_PAWNS > RED_PAWNS) {
+                BoardFrame.WINNER = "WHITE";
+                System.out.println("KONIEC GRY ZWYCIESTWO BIALYCH");
+            } else if (RED_PAWNS > WHITE_PAWNS){
+                BoardFrame.WINNER = "RED";
+                System.out.println("KONIEC GRY - ZWYCIESTWO CZERWONYCH");
+            }
+            else{
+                BoardFrame.WINNER = "DRAW";
+                System.out.println("KONIEC GRY - REMIS");
+            }
         }
     }
 

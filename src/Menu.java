@@ -48,7 +48,7 @@ public class Menu extends JFrame{
         frame.add(buttonPanel);
         frame.setVisible(true);
 
-        Solo.addActionListener(new ActionListener() {
+        Duo.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 Game.Run();
@@ -56,7 +56,7 @@ public class Menu extends JFrame{
         });
 
 
-        Duo.addActionListener(e -> JOptionPane.showMessageDialog(frame, "Tryb z ziomalem"));
+        Solo.addActionListener(e -> JOptionPane.showMessageDialog(frame, "Tryb z botem"));
 
         Online.addActionListener(e -> JOptionPane.showMessageDialog(frame, "Ziomal na drugim kompie"));
     }
