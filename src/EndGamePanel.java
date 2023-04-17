@@ -12,7 +12,7 @@ public class EndGamePanel extends JFrame {
         setResizable(false);
 
         JLabel EndGameInformation = new JLabel();
-        EndGameInformation.setText(BoardFrame.WINNER + " PAWNS WON");
+        EndGameInformation.setText(Game.WINNER + " PAWNS WON");
         EndGameInformation.setBounds(90,85, 200, 40);
         EndGameInformation.setBackground(Color.CYAN);
         add(EndGameInformation);
@@ -23,7 +23,9 @@ public class EndGamePanel extends JFrame {
         playButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                Menu.Run();
+                dispose();
+                Menu.GameThread.interrupt();
+                new Menu();
             }
         });
 

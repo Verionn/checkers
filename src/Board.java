@@ -128,7 +128,7 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
     }
 
     private void SubtractPiece() {
-        if(BoardFrame.MOVE.equals("RED")) {
+        if(Game.MOVE.equals("RED")) {
             WHITE_PAWNS--;
         }
         else{
@@ -161,7 +161,7 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
             if(y1 > y2){
                 for (int i = 0; i < AmountOfFieldsBetween; i++) {
                     if(PAWN[y1-i][x1-i] != null) {
-                        if(!PAWN[y1-i][x1-i].getColor().equals(BoardFrame.MOVE)) {
+                        if(!PAWN[y1-i][x1-i].getColor().equals(Game.MOVE)) {
                             return new Point(x1-i, y1-i);
                         }
                     }
@@ -170,7 +170,7 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
             else {
                 for (int i = 0; i < AmountOfFieldsBetween; i++) {
                     if(PAWN[y1+i][x1-i] != null) {
-                        if(!PAWN[y1+i][x1-i].getColor().equals(BoardFrame.MOVE)) {
+                        if(!PAWN[y1+i][x1-i].getColor().equals(Game.MOVE)) {
                             return new Point(x1-i, y1+i);
                         }
                     }
@@ -181,7 +181,7 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
             if(y1 > y2) {
                 for (int i = 0; i < AmountOfFieldsBetween; i++) {
                     if(PAWN[y1-i][x1+i] != null) {
-                        if(!PAWN[y1-i][x1+i].getColor().equals(BoardFrame.MOVE)) {
+                        if(!PAWN[y1-i][x1+i].getColor().equals(Game.MOVE)) {
                             return new Point(x1+i, y1-i);
                         }
                     }
@@ -190,7 +190,7 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
             else {
                 for (int i = 0; i < AmountOfFieldsBetween; i++) {
                     if(PAWN[y1+i][x1+i] != null) {
-                        if(!PAWN[y1+i][x1+i].getColor().equals(BoardFrame.MOVE)) {
+                        if(!PAWN[y1+i][x1+i].getColor().equals(Game.MOVE)) {
                             return new Point(x1+i, y1+i);
                         }
                     }
@@ -200,7 +200,7 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
         return first;
     }
     private boolean ValidateMove(int x, int y, Pawn pawn) {
-        if (!BoardFrame.MOVE.equals(pawn.getColor())) {
+        if (!Game.MOVE.equals(pawn.getColor())) {
             System.out.println("Ruch wykonał pion innego koloru");
             return false;
         }
@@ -777,17 +777,17 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
 
         if(MandatoryMoves.size() != 0  &&  MandatoryMoves.get(0).getPath().size() != 0)
         {
-            System.out.println("RUCH: " + BoardFrame.MOVE);
+            System.out.println("RUCH: " + Game.MOVE);
             return;
         }
-        if (BoardFrame.MOVE.equals("WHITE")) {
-            BoardFrame.MOVE = "RED";
+        if (Game.MOVE.equals("WHITE")) {
+            Game.MOVE = "RED";
         }
         else {
-            BoardFrame.MOVE = "WHITE";
+            Game.MOVE = "WHITE";
         }
         MandatoryMoves.clear();
-        System.out.println("RUCH: " + BoardFrame.MOVE);
+        System.out.println("RUCH: " + Game.MOVE);
     }
 
     private Pawn[][] CloneArray(Pawn[][] PawnsToClone) {
@@ -820,28 +820,28 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
 
     private void CheckIfTheGameHasBeenEnded()
     {
-        if(BoardFrame.GAME) {
+        if(Game.GAME) {
             if (WHITE_PAWNS == 0) {
-                BoardFrame.WINNER = "RED";
-                BoardFrame.GAME = false;
+                Game.WINNER = "RED";
+                Game.GAME = false;
                 System.out.println("KONIEC GRY ZWYCIESTWO BIALYCH");
+                return;
             } else if (RED_PAWNS == 0) {
-                BoardFrame.WINNER = "WHITE";
-                BoardFrame.GAME = false;
-                System.out.println("KONIEC GRY - ZWYCIESTWO CZERWONYCH");
+                Game.WINNER = "WHITE";
+                Game.GAME = false;
+                System.out.println("KONIEC GRY - ZWYCIESTWO CZERWONYCH" + Game.WINNER);
+                return;
             }
-        }
-        else
-        {
             if (WHITE_PAWNS > RED_PAWNS) {
-                BoardFrame.WINNER = "WHITE";
+                Game.WINNER = "WHITE";
                 System.out.println("KONIEC GRY ZWYCIESTWO BIALYCH");
             } else if (RED_PAWNS > WHITE_PAWNS){
-                BoardFrame.WINNER = "RED";
+                Game.WINNER = "RED";
                 System.out.println("KONIEC GRY - ZWYCIESTWO CZERWONYCH");
             }
-            else{
-                BoardFrame.WINNER = "DRAW";
+            else
+            {
+                Game.WINNER = "DRAW";
                 System.out.println("KONIEC GRY - REMIS");
             }
         }
@@ -903,7 +903,7 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
             PAWN[y][x] = PAWN[SELECTED_PAWN_Y][SELECTED_PAWN_X];
             PAWN[SELECTED_PAWN_Y][SELECTED_PAWN_X] = null;
             ChangeMove();
-            CheckCaptures(BoardFrame.MOVE);
+            CheckCaptures(Game.MOVE);
             if(PawnsWhichCanCapture.size() != 0) {
                 ReturnCapturePath();
             }

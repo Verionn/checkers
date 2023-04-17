@@ -1,8 +1,11 @@
 import java.util.Random;
 
-public class Game {
+public class Game extends Thread{
     public static Player FirstPlayer;
     public static Player SecondPlayer;
+    public static boolean GAME = true;
+    public static String MOVE = "WHITE";
+    public static String WINNER;
 
     private static void RandomColors()
     {
@@ -19,10 +22,24 @@ public class Game {
             SecondPlayer = new Player("RED", 3);
         }
     }
-    public static void Run(){
+    public Game() {
+        setSettings();
         RandomColors();
         new BoardFrame();
+    }
 
+    private void setSettings() {
+        MOVE = "WHITE";
+        WINNER = "DRAW";
+        GAME = true;
+    }
 
+    @Override
+    public void run()
+    {
+        while (!Thread.currentThread().isInterrupted()) {
+            System.out.println("Watek zostal przerwany wziuuum");
+            return;
+        }
     }
 }

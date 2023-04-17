@@ -1,6 +1,4 @@
 import javax.swing.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 public class BoardFrame extends JFrame {
     private static final int WINDOW_HEIGHT = 1000;
@@ -9,9 +7,6 @@ public class BoardFrame extends JFrame {
     private static final int RED_TIMER_POS_Y = 200;
     private static final int WHITE_TIMER_POS_X = 830;
     private static final int WHITE_TIMER_POS_Y = 760;
-    public static boolean GAME = true;
-    public static String MOVE = "WHITE";
-    public static String WINNER;
     BoardFrame(){
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(WINDOW_WIDTH, WINDOW_HEIGHT);
@@ -19,17 +14,19 @@ public class BoardFrame extends JFrame {
         setResizable(false);
         setLayout(null);
         add(new Board());
-        add(new MoveTimer(WHITE_TIMER_POS_X, WHITE_TIMER_POS_Y, "WHITE"));
-        add(new MoveTimer(RED_TIMER_POS_X, RED_TIMER_POS_Y, "RED"));
+        add(new MoveTimer(WHITE_TIMER_POS_X, WHITE_TIMER_POS_Y, "WHITE", 5));
+        add(new MoveTimer(RED_TIMER_POS_X, RED_TIMER_POS_Y, "RED", 5));
         setVisible(true);
         WaitForEndOfTheGame(this);
     }
+
     public void WaitForEndOfTheGame(JFrame parent) {
 
         Timer timer = new Timer(1000, e -> {
-            if(!BoardFrame.GAME) {
+            if(!Game.GAME) {
                 new EndGamePanel(parent);
                 ((Timer)e.getSource()).stop();
+                parent.dispose();
 
             }
         });

@@ -12,8 +12,8 @@ public class Menu extends JFrame{
     private static final String DUO_GAME = "Play with friend";
     private static final String ONLINE_GAME = "Play online";
     private static final String BACKGROUND_IMAGE_PATH = "/home/verion/Pulpit/PO2/VIII - Project/Checkers/src/Images/Background_Menu.jpg";
-    public static void Run() {
-
+    public static Thread GameThread;
+    Menu() {
         JFrame frame = new JFrame("Checkers - Menu");
         frame.setSize(1000, 700);
         frame.setResizable(false);
@@ -51,7 +51,12 @@ public class Menu extends JFrame{
         Duo.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                Game.Run();
+                frame.dispose();
+
+                GameThread = new Game();
+                System.out.println("tworzem nowa gre i ja odpalam byniu");
+                GameThread.start();
+
             }
         });
 
