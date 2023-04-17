@@ -14,8 +14,8 @@ public class BoardFrame extends JFrame {
         setResizable(false);
         setLayout(null);
         add(new Board());
-        add(new MoveTimer(WHITE_TIMER_POS_X, WHITE_TIMER_POS_Y, "WHITE", 5));
-        add(new MoveTimer(RED_TIMER_POS_X, RED_TIMER_POS_Y, "RED", 5));
+        add(new MoveTimer(WHITE_TIMER_POS_X, WHITE_TIMER_POS_Y, "WHITE", Game.Game_Length));
+        add(new MoveTimer(RED_TIMER_POS_X, RED_TIMER_POS_Y, "RED", Game.Game_Length));
         setVisible(true);
         WaitForEndOfTheGame(this);
     }
@@ -26,7 +26,7 @@ public class BoardFrame extends JFrame {
             if(!Game.GAME) {
                 new EndGamePanel(parent);
                 ((Timer)e.getSource()).stop();
-                parent.dispose();
+                //parent.dispose();
 
             }
         });

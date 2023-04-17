@@ -1,7 +1,5 @@
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 public class Menu extends JFrame{
 
@@ -12,7 +10,6 @@ public class Menu extends JFrame{
     private static final String DUO_GAME = "Play with friend";
     private static final String ONLINE_GAME = "Play online";
     private static final String BACKGROUND_IMAGE_PATH = "/home/verion/Pulpit/PO2/VIII - Project/Checkers/src/Images/Background_Menu.jpg";
-    public static Thread GameThread;
     Menu() {
         JFrame frame = new JFrame("Checkers - Menu");
         frame.setSize(1000, 700);
@@ -48,16 +45,9 @@ public class Menu extends JFrame{
         frame.add(buttonPanel);
         frame.setVisible(true);
 
-        Duo.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                frame.dispose();
-
-                GameThread = new Game();
-                System.out.println("tworzem nowa gre i ja odpalam byniu");
-                GameThread.start();
-
-            }
+        Duo.addActionListener(e -> {
+            frame.dispose();
+            new Game();
         });
 
 

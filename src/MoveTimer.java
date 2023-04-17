@@ -1,8 +1,6 @@
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
-import java.sql.Time;
-
 
 public class MoveTimer extends JPanel {
 
@@ -17,7 +15,6 @@ public class MoveTimer extends JPanel {
         TimeLabel.setFont(new Font("Arial", Font.BOLD, 24));
         PawnColor = color;
         setBounds(PosX, PosY, TIMER_WIDTH, TIMER_HEIGHT);
-        //setBackground(Color.gray);
         add(TimeLabel);
         TimeLeft = TimeInSec;
         StartTimer();
@@ -30,6 +27,7 @@ public class MoveTimer extends JPanel {
             if (TimeLeft == 0 || !Game.GAME) {
                 Game.GAME = false;
                 ((Timer)evt.getSource()).stop();
+                return;
             }
 
             if(Game.MOVE.equals(PawnColor))
