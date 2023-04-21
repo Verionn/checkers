@@ -119,14 +119,13 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
                 }
             }
         }*/
-        PAWN[1][2] = new Pawn("WHITE", 2 * FIELD_SIZE, 1 * FIELD_SIZE, false);
+        PAWN[0][3] = new Pawn("WHITE", 3 * FIELD_SIZE, 0 * FIELD_SIZE, true);
         Game.WHITE_PAWNS++;
-        PAWN[2][3] = new Pawn("WHITE", 3 * FIELD_SIZE, 2 * FIELD_SIZE, false);
-        Game.WHITE_PAWNS++;
-        PAWN[4][5] = new Pawn("WHITE", 5 * FIELD_SIZE, 4 * FIELD_SIZE, false);
-        Game.WHITE_PAWNS++;
-        PAWN[5][6] = new Pawn("RED", 6 * FIELD_SIZE, 5 * FIELD_SIZE, true);
+        PAWN[5][2] = new Pawn("RED", 2 * FIELD_SIZE, 5 * FIELD_SIZE, false);
         Game.RED_PAWNS++;
+        PAWN[4][3] = new Pawn("RED", 3 * FIELD_SIZE, 4 * FIELD_SIZE, false);
+        Game.RED_PAWNS++;
+
 
     }
 
@@ -157,8 +156,7 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
         return false;
     }
 
-    private boolean CheckIfThatQueenMoveIsAllowed(Point QueenPos, Point Target)
-    {
+    private boolean CheckIfThatQueenMoveIsAllowed(Point QueenPos, Point Target) {
         int x1 = QueenPos.getX();
         int x2 = Target.getX();
 
@@ -166,34 +164,33 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
 
         int AmountOfFieldsBetween = abs(x1-x2);
 
-        for (int i = 1; i < AmountOfFieldsBetween; i++)
-        {
-            if(CheckIfFieldIsInDiagonal(new Point(x2-i, y2-i), QueenPos))
-            {
-                if( y2-i >= 0 && x2-i >= 0 && PAWN[y2-i][x2-i] != null)
-                {
-                    return false;
+        for (int i = 1; i < AmountOfFieldsBetween; i++) {
+            if(CheckIfFieldIsInDiagonal(new Point(x2-i, y2-i), QueenPos)) {
+                if( y2-i >= 0 && x2-i >= 0 && PAWN[y2-i][x2-i] != null) {
+                    if(PAWN[y2-i][x2-i].getColor().equals(Game.MOVE)) {
+                        return false;
+                    }
                 }
             }
-            if(CheckIfFieldIsInDiagonal(new Point(x2-i, y2+i), QueenPos))
-            {
-                if(y2-i >= 0 && x2+i <= 7 && PAWN[y2-i][x2+i] != null)
-                {
-                    return false;
+            if(CheckIfFieldIsInDiagonal(new Point(x2+i, y2-i), QueenPos)) {
+                if(y2-i >= 0 && x2+i <= 7 && PAWN[y2-i][x2+i] != null) {
+                    if(PAWN[y2-i][x2+i].getColor().equals(Game.MOVE)) {
+                        return false;
+                    }
                 }
             }
-            if(CheckIfFieldIsInDiagonal(new Point(x2+i, y2-i), QueenPos))
-            {
-                if(y2+i <= 7 && x2-i >= 0 &&PAWN[y2+i][x2-i] != null)
-                {
-                    return false;
+            if(CheckIfFieldIsInDiagonal(new Point(x2-i, y2+i), QueenPos)) {
+                if(y2+i <= 7 && x2-i >= 0 && PAWN[y2+i][x2-i] != null) {
+                    if(PAWN[y2+i][x2-i].getColor().equals(Game.MOVE)) {
+                        return false;
+                    }
                 }
             }
-            if(CheckIfFieldIsInDiagonal(new Point(x2+i, y2+i), QueenPos))
-            {
-                if(y2+i <= 7 && x2+i <= 7 && PAWN[y2+i][x2+i] != null)
-                {
-                    return false;
+            if(CheckIfFieldIsInDiagonal(new Point(x2+i, y2+i), QueenPos)) {
+                if(y2+i <= 7 && x2+i <= 7 && PAWN[y2+i][x2+i] != null) {
+                    if(PAWN[y2+i][x2+i].getColor().equals(Game.MOVE)) {
+                        return false;
+                    }
                 }
             }
         }
@@ -278,19 +275,16 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
             for (int i = 0; i < MandatoryMoves.size(); i++) {
                 CapturePath Path = MandatoryMoves.get(i);
                 Vector<Point> CapturePath = Path.getPath();
-                if(!CheckStartingPoint(SELECTED_PAWN_X, SELECTED_PAWN_Y))
-                {
+                if (!CheckStartingPoint(SELECTED_PAWN_X, SELECTED_PAWN_Y)) {
                     System.out.println("Bicie zlym pionkiem");
                     return false;
                 }
                 System.out.println("Starting point: " + Path.getStartingPoint().getX() + " | " + Path.getStartingPoint().getY());
-                for (int j = 0; j < CapturePath.size(); j++)
-                {
-                    Point point = CapturePath.get(j);
-                    if(point.getX() == x && point.getY() == y)
-                    {
+                Point point = CapturePath.get(0);
+                if (point.getX() == x && point.getY() == y) {
+                    if (Path.getStartingPoint().getX() == SELECTED_PAWN_X && Path.getStartingPoint().getY() == SELECTED_PAWN_Y) {
                         Path.setStartingPoint(CapturePath.firstElement());
-                        CapturePath.remove(j);
+                        CapturePath.remove(0);
                         Path.setPath(CapturePath);
                         MandatoryMoves.remove(i);
                         MandatoryMoves.add(Path);
@@ -299,10 +293,9 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
                         PAWN[CapturedPawnPos.getY()][CapturedPawnPos.getX()] = null;
                         SubtractPiece();
 
-                        if(MandatoryMoves.size() > 1) {
+                        if (MandatoryMoves.size() > 1) {
                             UpdateMandatoryMoves();
                         }
-
                         return true;
                     }
                 }
@@ -411,9 +404,18 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
     private Point CheckRightTopCornerAsQueen(Pawn pawn, int x, int y, Pawn[][] Pawn) {
         for(int i = 1; i < 7; i++) {
             if (y - i >= 0 && x + i <= 7) {
-                if (Pawn[y - i][x + i] != null && !Pawn[y - i][x + i].getColor().equals(pawn.getColor())) {
-                    if (x + i + 1 <= 7 && y - i - 1 >= 0 && Pawn[y - i-1][x + i + 1] == null) {
-                        return new Point(x + i + 1, y - i - 1);
+                if (Pawn[y - i][x + i] != null){
+                    if(!Pawn[y - i][x + i].getColor().equals(pawn.getColor()))
+                    {
+                        if (x + i + 1 <= 7 && y - i - 1 >= 0 && Pawn[y - i-1][x + i + 1] == null) {
+                            return new Point(x + i + 1, y - i - 1);
+                        }
+                        else{
+                            return null;
+                        }
+                    }
+                    else{
+                        return null;
                     }
                 }
             }
@@ -424,9 +426,14 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
     private Point CheckLeftTopCornerAsQueen(Pawn pawn, int x, int y, Pawn[][] Pawn) {
         for(int i = 1; i < 7; i++) {
             if (y - i >= 0 && x - i >= 0) {
-                if (Pawn[y - i][x - i] != null && !Pawn[y - i][x - i].getColor().equals(pawn.getColor())) {
-                    if (x - i - 1 >= 0 && y - i - 1 >= 0 && Pawn[y - i - 1][x - i - 1] == null) {
-                        return new Point(x - i - 1, y - i - 1);
+                if (Pawn[y - i][x - i] != null){
+                    if(!Pawn[y - i][x - i].getColor().equals(pawn.getColor())) {
+                        if (x - i - 1 >= 0 && y - i - 1 >= 0 && Pawn[y - i - 1][x - i - 1] == null) {
+                            return new Point(x - i - 1, y - i - 1);
+                        }
+                        else{
+                            return null;
+                        }
                     }
                     else{
                         return null;
@@ -440,9 +447,18 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
     private Point CheckLeftBottomCornerAsQueen(Pawn pawn, int x, int y, Pawn[][] Pawn) {
         for(int i = 1; i < 7; i++) {
             if (y + i <= 7 && x - i >= 0) {
-                if (Pawn[y + i][x - i] != null && !Pawn[y + i][x - i].getColor().equals(pawn.getColor())) {
-                    if (x - i - 1 >= 0 && y + i + 1 <= 7 && Pawn[y + i + 1][x - i - 1] == null) {
-                        return new Point(x - i - 1, y + i + 1);
+                if (Pawn[y + i][x - i] != null){
+                    if(!Pawn[y + i][x - i].getColor().equals(pawn.getColor()))
+                    {
+                        if (x - i - 1 >= 0 && y + i + 1 <= 7 && Pawn[y + i + 1][x - i - 1] == null) {
+                            return new Point(x - i - 1, y + i + 1);
+                        }
+                        else{
+                            return null;
+                        }
+                    }
+                    else{
+                        return null;
                     }
                 }
             }
@@ -453,9 +469,19 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
     private Point CheckRightBottomCornerAsQueen(Pawn pawn, int x, int y, Pawn[][] Pawn) {
         for(int i = 1; i < 7; i++) {
             if (y + i <= 7 && x + i <= 7) {
-                if (Pawn[y + i][x + i] != null && !Pawn[y + i][x + i].getColor().equals(pawn.getColor())) {
-                    if (x + i + 1 <= 7 && y + i + 1 <= 7 && Pawn[y + i + 1][x + i + 1] == null) {
-                        return new Point(x + i + 1, y + i + 1);
+                if (Pawn[y + i][x + i] != null)
+                {
+                    if(!Pawn[y + i][x + i].getColor().equals(pawn.getColor()))
+                    {
+                        if (x + i + 1 <= 7 && y + i + 1 <= 7 && Pawn[y + i + 1][x + i + 1] == null) {
+                            return new Point(x + i + 1, y + i + 1);
+                        }
+                        else{
+                            return null;
+                        }
+                    }
+                    else{
+                        return null;
                     }
                 }
             }
@@ -651,6 +677,8 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
 
         int x = pawn.getX() / FIELD_SIZE;
         int y = pawn.getY() / FIELD_SIZE;
+
+        //POPRAIWC BICIE KROLOWEJ BO MOZE BIC PIONKI PRZEZ SWOJE PIONKI ;c
 
         if(pawn.isQueen()) {
             Point leftTopCorner = CheckLeftTopCornerAsQueen(pawn, x, y, CopyOfPawns);
