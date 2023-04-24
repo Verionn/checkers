@@ -12,6 +12,9 @@ public class EndGamePanel extends JFrame {
 
         JLabel EndGameInformation = new JLabel();
         EndGameInformation.setText(Game.WINNER + " PAWNS WON");
+
+        //TODO: poprawic to bo moze sie wyswietlic DRAW PAWNS WON XD
+
         EndGameInformation.setBounds(90,85, 200, 40);
         EndGameInformation.setBackground(Color.CYAN);
         add(EndGameInformation);

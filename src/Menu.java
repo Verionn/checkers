@@ -47,11 +47,14 @@ public class Menu extends JFrame{
 
         Duo.addActionListener(e -> {
             frame.dispose();
-            new Game();
+            new Game("NORMAL");
         });
 
 
-        Solo.addActionListener(e -> JOptionPane.showMessageDialog(frame, "Tryb z botem"));
+        Solo.addActionListener(e -> {
+            frame.dispose();
+            new Game("BOT");
+        });
 
         Online.addActionListener(e -> JOptionPane.showMessageDialog(frame, "Ziomal na drugim kompie"));
     }
