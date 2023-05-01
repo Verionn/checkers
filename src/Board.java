@@ -19,6 +19,8 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
     private static final int COLUMNS = 8;
     private final String QUEEN_TYPE = "Queen";
     private final String PAWN_TYPE = "Pawn";
+    public static final String WHITE_COLOR = "WHITE";
+    public static final String RED_COLOR = "RED";
     private final double DIFF_BETWEEN_FIELDS = ReturnDistanceBetweenPoints(new Point(2, 2), new Point(4, 4));
     private int SELECTED_PAWN_X;
     private int SELECTED_PAWN_Y;
@@ -81,7 +83,7 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
                 if (PAWN[i][j] != null)
                 {
                     if(!PAWN[i][j].isQueen()) {
-                        if (PAWN[i][j].getColor().equals("RED")) {
+                        if (PAWN[i][j].getColor().equals(RED_COLOR)) {
                             g2d.setColor(Color.RED);
                             g2d.fillOval(PAWN[i][j].getX() + PAWN_OFFSET, PAWN[i][j].getY() + PAWN_OFFSET, PAWN_SIZE, PAWN_SIZE);
                         } else {
@@ -91,7 +93,7 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
                     }
                     else
                     {
-                        if (PAWN[i][j].getColor().equals("RED")) {
+                        if (PAWN[i][j].getColor().equals(RED_COLOR)) {
                             g2d.setColor(Color.RED);
                             g2d.fillOval(PAWN[i][j].getX() + PAWN_OFFSET, PAWN[i][j].getY() + PAWN_OFFSET, PAWN_SIZE, PAWN_SIZE);
                             g2d.setColor(Color.WHITE);
@@ -126,11 +128,11 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
         for (int i = 0; i < ROWS; i++) {
             for (int j = 0; j < COLUMNS; j++) {
                 if (i < 3 && (i + j) % 2 == 1) {
-                    PAWN[i][j] = new Pawn("RED", j * FIELD_SIZE, i * FIELD_SIZE, false);
+                    PAWN[i][j] = new Pawn(RED_COLOR, j * FIELD_SIZE, i * FIELD_SIZE, false);
                     Game.increaseRedPawns();
                 }
                 if (i > 4 && (i + j) % 2 == 1) {
-                    PAWN[i][j] = new Pawn("WHITE", j * FIELD_SIZE, i * FIELD_SIZE, false);
+                    PAWN[i][j] = new Pawn(WHITE_COLOR, j * FIELD_SIZE, i * FIELD_SIZE, false);
                     Game.increaseWhitePawns();
                 }
             }
@@ -144,7 +146,7 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
     }
 
     private void SubtractPiece() {
-        if(Game.getMove().equals("RED")) {
+        if(Game.getMove().equals(RED_COLOR)) {
             Game.decreaseWhitePawns();
         }
         else{
@@ -413,7 +415,7 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
     }
 
     private boolean CheckIfMoveIsForward(int PosY, int TargetY, String color) {
-        if (color.equals("RED")) {
+        if (color.equals(RED_COLOR)) {
             if (PosY >= TargetY) {
                 System.out.println("Ruch do tylu lub w bok pionem czerwonym");
                 return false;
@@ -424,7 +426,7 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
             }
 
         }
-        if (color.equals("WHITE")) {
+        if (color.equals(WHITE_COLOR)) {
             if (PosY <= TargetY) {
                 System.out.println("Ruch do tylu lub w bok pionem bialym");
                 return false;
@@ -997,11 +999,11 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
         if(MandatoryMoves.size() != 0  &&  MandatoryMoves.get(0).getPath().size() != 0) {
             return;
         }
-        if (Game.getMove().equals("WHITE")) {
-            Game.setMove("RED");
+        if (Game.getMove().equals(WHITE_COLOR)) {
+            Game.setMove(RED_COLOR);
         }
         else {
-            Game.setMove("WHITE");
+            Game.setMove(WHITE_COLOR);
         }
         MandatoryMoves.clear();
     }
@@ -1052,38 +1054,38 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
 
         if(gameStatus) {
             if (whitePawns == 0) {
-                Game.setWinner("RED");
+                Game.setWinner(RED_COLOR);
                 Game.setGameStatus(false);
                 System.out.println("KONIEC GRY ZWYCIESTWO Czerwonych");
                 return;
             }
             else if (redPawns == 0) {
-                Game.setWinner("WHITE");
+                Game.setWinner(WHITE_COLOR);
                 Game.setGameStatus(false);
                 System.out.println("KONIEC GRY - ZWYCIESTWO Bialych");
                 return;
             }
             if(AvailableMoves.size() == 0 && MandatoryMoves.size() == 0)
             {
-                if(move.equals("RED"))
+                if(move.equals(RED_COLOR))
                 {
-                    Game.setWinner("WHITE");
+                    Game.setWinner(WHITE_COLOR);
                     Game.setGameStatus(false);
                     System.out.println("CZERWONE BRAK RUCHOW");
                     return;
                 }
-                else if(move.equals("WHITE"))
+                else if(move.equals(WHITE_COLOR))
                 {
-                    Game.setWinner("RED");
+                    Game.setWinner(RED_COLOR);
                     Game.setGameStatus(false);
                     System.out.println("BIALE BRAK RUCHOW");
                     return;
                 }
             }
             if (whitePawns > redPawns) {
-                Game.setWinner("WHITE");
+                Game.setWinner(WHITE_COLOR);
             } else if (redPawns > whitePawns){
-                Game.setWinner("RED");
+                Game.setWinner(RED_COLOR);
             }
             else
             {
@@ -1197,6 +1199,7 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
             PAWN[y][x] = PAWN[SELECTED_PAWN_Y][SELECTED_PAWN_X];
             PAWN[SELECTED_PAWN_Y][SELECTED_PAWN_X] = null;
             ChangeMove();
+            move = Game.getMove();
             CountMoves(move);
             CheckCaptures(move);
             if(PawnsWhichCanCapture.size() != 0) {

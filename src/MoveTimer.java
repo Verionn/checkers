@@ -32,7 +32,7 @@ public class MoveTimer extends JPanel {
                 return;
             }
 
-            if(Game.getMOVE().equals(PawnColor))
+            if(Game.getMove().equals(PawnColor))
             {
                 TimeLeft--;
                 int minute = TimeLeft / 60;

@@ -19,7 +19,7 @@ public class Bot extends Thread{
 
         while(Game.getGameStatus())
         {
-            String move = Game.getMOVE();
+            String move = Game.getMove();
             if(move.equals(color)) {
                 Vector<CapturePath> Captures = board.getMandatoryMoves();
                 if(Captures.size() != 0) {
