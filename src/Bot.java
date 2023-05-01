@@ -44,7 +44,7 @@ public class Bot extends Thread{
             }
             else{
                 try {
-                    sleep(1500);
+                    sleep(1000);
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
                 }

@@ -11,9 +11,7 @@ public class Game {
     private static int WHITE_PAWNS;
     private static int RED_PAWNS;
     public static final int GAME_LENGTH = 300;
-
     private final BoardFrame boardFrame;
-    private Board board;
 
     private void RandomColors() {
         Random rand = new Random();
@@ -46,6 +44,7 @@ public class Game {
 
     }
     private void SelectMode(){
+        Board board;
         if (TypeOfGame.equals("NORMAL")) {
             board = new Board("NORMAL", GameWithoutBot);
             boardFrame.add(board);
