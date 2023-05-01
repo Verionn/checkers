@@ -5,6 +5,9 @@ import java.util.Vector;
 
 import static java.lang.Math.abs;
 
+
+//TODO:
+//Wysrodkowac napisy przy remisie
 public class Board extends JPanel implements MouseListener, MouseMotionListener {
     private final String GameMode;
     private final String BotColor;
@@ -345,11 +348,6 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
     }
 
     private boolean ValidateMove(int PosX, int PosY, int TargetX, int TargetY, Pawn pawn) {
-
-        //TODO:
-
-        // dodac zakonczenie gry, gdy zostalo po jednej damce
-
         if (!Game.getMove().equals(pawn.getColor())) {
             System.out.println("Ruch wykonał pion innego koloru");
             return false;
