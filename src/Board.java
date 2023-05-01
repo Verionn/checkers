@@ -21,6 +21,7 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
     private int SELECTED_PAWN_X;
     private int SELECTED_PAWN_Y;
     private final Pawn[][] PAWN = new Pawn[ROWS][COLUMNS];
+    private final String[] Directions = {"LeftTop", "RightTop", "LeftBottom", "RightBottom"};
     private final Vector<Pawn> PawnsWhichCanCapture = new Vector<>();
     private final Vector<CapturePath> AllOptionsOfCapturingForSpecificPawn = new Vector<>();
     private final Vector<CapturePath> MandatoryMoves = new Vector<>();
@@ -155,6 +156,15 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
         PAWN[4][3] = new Pawn("RED", 3 * FIELD_SIZE, 4 * FIELD_SIZE, false);
         Game.RED_PAWNS++;
         */
+
+        /*PAWN[1][4] = new Pawn("WHITE", 4 * FIELD_SIZE, 1 * FIELD_SIZE, false);
+        Game.WHITE_PAWNS++;
+        PAWN[5][2] = new Pawn("RED", 2 * FIELD_SIZE, 5 * FIELD_SIZE, false);
+        Game.RED_PAWNS++;
+        PAWN[4][3] = new Pawn("RED", 3 * FIELD_SIZE, 4 * FIELD_SIZE, false);
+        Game.RED_PAWNS++;
+           */
+        
         /*
         PAWN[5][4] = new Pawn("WHITE", 4 * FIELD_SIZE, 5 * FIELD_SIZE, false);
         Game.WHITE_PAWNS++;
@@ -207,6 +217,7 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
 
         return false;
     }
+
     private boolean CheckIfMoveExist(int PosX, int PosY, int TargetX, int TargetY){
         for (int i = 0; i < AvaiableMoves.size(); i++) {
             Move move = AvaiableMoves.get(i);
@@ -232,37 +243,50 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
 
                     int PosY = PAWN[i][j].getY() / FIELD_SIZE;
 
-                    if(i+1 <= 7 && j+1 <= 7 && PAWN[i+1][j+1] == null){
-                        if(!CheckIfMoveExist(i, j,j+1, i+1)){
-                            if(CheckIfMoveIsForward(PosY, i+1, color)) {
-                                AvaiableMoves.add(new Move(j, i,i+1, j+1));
+                    if (!PAWN[i][j].isQueen()) {
+
+                        if (i + 1 <= 7 && j + 1 <= 7 && PAWN[i + 1][j + 1] == null) {
+                            if (!CheckIfMoveExist(i, j, j + 1, i + 1)) {
+                                if (CheckIfMoveIsForward(PosY, i + 1, color)) {
+                                    AvaiableMoves.add(new Move(j, i, j + 1, i + 1));
+                                }
                             }
                         }
-                    }
-                    if(i+1 <= 7 && j-1 >= 0 && PAWN[i+1][j-1] == null){
-                        if(PAWN[i+1][j-1] == null){
-                            if(!CheckIfMoveExist(i, j, j-1, i+1)){
-                                if(CheckIfMoveIsForward(PosY, i+1, color)) {
-                                    AvaiableMoves.add(new Move(j, i, j-1, i+1));
+                        if (i + 1 <= 7 && j - 1 >= 0 && PAWN[i + 1][j - 1] == null) {
+                            if (PAWN[i + 1][j - 1] == null) {
+                                if (!CheckIfMoveExist(i, j, j - 1, i + 1)) {
+                                    if (CheckIfMoveIsForward(PosY, i + 1, color)) {
+                                        AvaiableMoves.add(new Move(j, i, j - 1, i + 1));
+                                    }
+                                }
+                            }
+                        }
+                        if (i - 1 >= 0 && j + 1 <= 7 && PAWN[i - 1][j + 1] == null) {
+                            if (PAWN[i - 1][j + 1] == null) {
+                                if (!CheckIfMoveExist(i, j, j + 1, i - 1)) {
+                                    if (CheckIfMoveIsForward(PosY, i - 1, color)) {
+                                        AvaiableMoves.add(new Move(j, i, j + 1, i - 1));
+                                    }
+                                }
+                            }
+                        }
+                        if (i - 1 >= 0 && j - 1 >= 0 && PAWN[i - 1][j - 1] == null) {
+                            if (PAWN[i - 1][j - 1] == null) {
+                                if (!CheckIfMoveExist(i, j, j - 1, i - 1)) {
+                                    if (CheckIfMoveIsForward(PosY, i - 1, color)) {
+                                        AvaiableMoves.add(new Move(j, i, j - 1, i - 1));
+                                    }
                                 }
                             }
                         }
                     }
-                    if(i-1 >= 0 && j+1 <= 7 && PAWN[i-1][j+1] == null){
-                        if(PAWN[i-1][j+1] == null){
-                            if(!CheckIfMoveExist(i, j, j+1, i-1)){
-                                if(CheckIfMoveIsForward(PosY, i-1, color)) {
-                                    AvaiableMoves.add(new Move(j, i, j+1, i-1));
-                                }
-                            }
-                        }
-                    }
-                    if(i-1 >= 0 && j-1 >= 0 && PAWN[i-1][j-1] == null){
-                        if(PAWN[i-1][j-1] == null){
-                            if(!CheckIfMoveExist(i, j, j-1, i-1)){
-                                if(CheckIfMoveIsForward(PosY, i-1, color)) {
-                                    AvaiableMoves.add(new Move(j, i,j-1, i-1));
-                                }
+                    else
+                    {
+                        for (int z = 0; z < Directions.length; z++) {
+                            Vector<Point> PossibleMoves = ReturnMovesAfterCaptureOfQueen(PAWN[i][j], j, i, PAWN, Directions[z]);
+                            for (int k = 0 ; k < PossibleMoves.size(); k++){
+                                Point pkt = PossibleMoves.get(k);
+                                AvaiableMoves.add(new Move(j, i, pkt.getX(), pkt.getY()));
                             }
                         }
                     }
@@ -370,6 +394,10 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
 
     private boolean ValidateMove(int PosX, int PosY, int TargetX, int TargetY, Pawn pawn) {
 
+        //TODO:
+        //Dodac walidacje z botem, prawdopdobnie przez dodanei do konstrukturora jakiegos stringa z trybem
+        //bo mozna sie ruszyc jako 'bot' czasami
+
         if (!Game.MOVE.equals(pawn.getColor())) {
             System.out.println("Ruch wykonał pion innego koloru");
             return false;
@@ -438,6 +466,7 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
         }
         return true;
     }
+
     private boolean CheckIfMoveIsForward(int PosY, int TargetY, String color) {
         if (color.equals("RED")) {
             if (PosY >= TargetY) {
@@ -668,10 +697,13 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
     private VectorInfo ReturnVectorWithSpecficLastPoint(Point CheckedPoint, String type) {
         for (int i = 0; i < AllOptionsOfCapturingForSpecificPawn.size(); i++) {
             CapturePath Path = AllOptionsOfCapturingForSpecificPawn.get(i);
+
             if (Path.isFinished()) {
                 continue;
             }
+
             Point LastPoint = Path.getPath().lastElement();
+
             if(type.equals(PAWN_TYPE)) {
                 if (ReturnDistanceBetweenPoints(LastPoint, CheckedPoint) == DIFF_BETWEEN_FIELDS) {
                     return new VectorInfo(i, -1);
@@ -686,6 +718,7 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
         for (int i = 0; i < AllOptionsOfCapturingForSpecificPawn.size(); i++) {
             CapturePath Path = AllOptionsOfCapturingForSpecificPawn.get(i);
             Vector<Point> vector = Path.getPath();
+
             for (int j = 0; j < vector.size() - 1; j++) {
                 Point point = vector.get(j);
                 if (ReturnDistanceBetweenPoints(point, CheckedPoint) == DIFF_BETWEEN_FIELDS) {
@@ -711,13 +744,17 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
         if (PathIndex.getI() == -1 && PathIndex.getJ() == -1) {
             Vector<Point> NewPath = new Vector<>();
             NewPath.add(CheckedPoint);
+
             CapturePath Path = new CapturePath(NewPath, false,FirstPoint);
+
             AllOptionsOfCapturingForSpecificPawn.add(Path);
         }
         else if (PathIndex.getI() >= 0 && PathIndex.getJ() == -1) {
             CapturePath Path = AllOptionsOfCapturingForSpecificPawn.get(PathIndex.getI());
             Vector<Point> FoundPath = Path.getPath();
+
             FoundPath.add(CheckedPoint);
+
             AllOptionsOfCapturingForSpecificPawn.remove(PathIndex.getI());
             AllOptionsOfCapturingForSpecificPawn.add(Path);
         }
@@ -725,9 +762,11 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
             CapturePath Path = AllOptionsOfCapturingForSpecificPawn.get(PathIndex.getI());
             Vector<Point> FoundPath = Path.getPath();
             Vector<Point> NewPath = new Vector<>();
+
             for (int i = 0; i <= PathIndex.getJ(); i++) {
                 NewPath.add(FoundPath.get(i));
             }
+
             NewPath.add(CheckedPoint);
             CapturePath NewPathClass = new CapturePath(NewPath, false, Path.getStartingPoint());
             AllOptionsOfCapturingForSpecificPawn.add(NewPathClass);
@@ -746,7 +785,11 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
                         if (Pawn[y - i][x - i] == null) {
                             Moves.add(new Point(x - i, y - i));
                         } else {
-                            break label;
+                            if ( ( pawn.getX() / FIELD_SIZE ) == x - i && ( pawn.getY() / FIELD_SIZE ) == y - i) {
+                                continue;
+                            } else {
+                                break label;
+                            }
                         }
                     }
                     break;
@@ -755,7 +798,11 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
                         if (Pawn[y - i][x + i] == null) {
                             Moves.add(new Point(x + i, y - i));
                         } else {
-                            break label;
+                            if ((pawn.getX() / FIELD_SIZE ) == x + i && ( pawn.getY() / FIELD_SIZE ) == y - i) {
+                                continue;
+                            } else {
+                                break label;
+                            }
                         }
                     }
                     break;
@@ -764,7 +811,12 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
                         if (Pawn[y + i][x - i] == null) {
                             Moves.add(new Point(x - i, y + i));
                         } else {
-                            break label;
+                            if((pawn.getX() / FIELD_SIZE ) == x - i && ( pawn.getY() / FIELD_SIZE ) == y + i){
+                                continue;
+                            }
+                            else{
+                                break label;
+                            }
                         }
                     }
                     break;
@@ -772,8 +824,13 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
                     if (y + i <= 7 && x + i <= 7) {
                         if (Pawn[y + i][x + i] == null) {
                             Moves.add(new Point(x + i, y + i));
-                        } else {
-                            break label;
+                        }
+                        else {
+                            if ((pawn.getX() / FIELD_SIZE) == x + i && ( pawn.getY() / FIELD_SIZE )  == y + i) {
+                                continue;
+                            } else {
+                                break label;
+                            }
                         }
                     }
                     break;
@@ -787,6 +844,7 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
                 }
             }
         }
+
         if(PossibleMoves.size() != 0) {
             return PossibleMoves;
         }
@@ -964,7 +1022,6 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
         int x = pawn.getX() / FIELD_SIZE;
 
         if (pawn.isQueen()) {
-            System.out.println("Jestem damka");
             if (CheckLeftTopCornerAsQueen(pawn, x, y, CopyOfPawns) != null) {
                 return true;
             }
@@ -1049,7 +1106,7 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
                 System.out.println("KONIEC GRY - ZWYCIESTWO Bialych" + Game.WINNER);
                 return;
             }
-            if(AvaiableMoves.size() == 0)
+            if(AvaiableMoves.size() == 0 && MandatoryMoves.size() == 0)
             {
                 if(Game.MOVE.equals("RED"))
                 {
@@ -1068,15 +1125,12 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
             }
             if (Game.WHITE_PAWNS > Game.RED_PAWNS) {
                 Game.WINNER = "WHITE";
-                System.out.println("BIALE WIECEJ PIONKOW");
             } else if (Game.RED_PAWNS > Game.WHITE_PAWNS){
                 Game.WINNER = "RED";
-                System.out.println("CZERWONE WIECEJ PIONKOW");
             }
             else
             {
                 Game.WINNER = "DRAW";
-                System.out.println("KONIEC GRY - REMIS");
             }
         }
     }

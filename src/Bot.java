@@ -38,7 +38,6 @@ public class Bot extends Thread{
                     TargetPoint = new Point(RandomMove.getTargetX(), RandomMove.getTargetY());
 
 
-                    System.out.println("Wykonalem jakis tam ruch");
                     board.MakeMove(StartingPoint, TargetPoint);
                 }
             }
