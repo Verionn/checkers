@@ -82,6 +82,33 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
 
     }
 
+    private void AddPieces() {
+
+        /*for (int i = 0; i < ROWS; i++) {
+            for (int j = 0; j < COLUMNS; j++) {
+                if (i < 3 && (i + j) % 2 == 1) {
+                    PAWN[i][j] = new Pawn(RED_COLOR, j * FIELD_SIZE, i * FIELD_SIZE, false);
+                    Game.increaseRedPawns();
+                }
+                if (i > 4 && (i + j) % 2 == 1) {
+                    PAWN[i][j] = new Pawn(WHITE_COLOR, j * FIELD_SIZE, i * FIELD_SIZE, false);
+                    Game.increaseWhitePawns();
+                }
+            }
+        }*/
+
+        PAWN[1][0] = new Pawn(WHITE_COLOR, 0 * FIELD_SIZE, 1 * FIELD_SIZE, false);
+        Game.increaseWhitePawns();
+        //PAWN[1][2] = new Pawn(WHITE_COLOR, 2 * FIELD_SIZE, 1 * FIELD_SIZE, false);
+        //Game.increaseWhitePawns();
+        PAWN[6][7] = new Pawn(RED_COLOR, 7 * FIELD_SIZE, 6 * FIELD_SIZE, false);
+        Game.increaseRedPawns();
+        PAWN[5][4] = new Pawn(RED_COLOR, 4 * FIELD_SIZE, 5 * FIELD_SIZE, false);
+        Game.increaseRedPawns();
+
+
+    }
+
     private void PaintPawns(Graphics g2d) {
         for (int i = 0; i < ROWS; i++) {
             for (int j = 0; j < COLUMNS; j++) {
@@ -126,27 +153,6 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
 
     public Vector<Move> getAvaiableMoves() {
         return AvailableMoves;
-    }
-
-    private void AddPieces() {
-
-        /*for (int i = 0; i < ROWS; i++) {
-            for (int j = 0; j < COLUMNS; j++) {
-                if (i < 3 && (i + j) % 2 == 1) {
-                    PAWN[i][j] = new Pawn(RED_COLOR, j * FIELD_SIZE, i * FIELD_SIZE, false);
-                    Game.increaseRedPawns();
-                }
-                if (i > 4 && (i + j) % 2 == 1) {
-                    PAWN[i][j] = new Pawn(WHITE_COLOR, j * FIELD_SIZE, i * FIELD_SIZE, false);
-                    Game.increaseWhitePawns();
-                }
-            }
-        }*/
-
-        PAWN[1][0] = new Pawn(RED_COLOR, 0 * FIELD_SIZE, 1 * FIELD_SIZE, false);
-        Game.increaseRedPawns();
-        PAWN[6][1] = new Pawn(WHITE_COLOR, 1 * FIELD_SIZE, 6 * FIELD_SIZE, false);
-        Game.increaseWhitePawns();
     }
 
     private void UpdateMandatoryMoves() {
@@ -1031,9 +1037,9 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
 
     private int ReturnSizeOfTheLongestCapturePath() {
         int max = 0;
-        for (CapturePath Path : AllOptionsOfCapturingForSpecificPawn) {
-            if (Path.getPath().size() > max) {
-                max = Path.getPath().size();
+        for (CapturePath path : AllOptionsOfCapturingForSpecificPawn) {
+            if (path.getPath().size() > max) {
+                max = path.getPath().size();
             }
         }
         return max;
@@ -1041,7 +1047,7 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
     private boolean CheckIfWinIsPossible(){
         int whitePawns = Game.getWhitePawns();
         int redPawns = Game.getRedPawns();
-        if(whitePawns == 1 && redPawns == 1){
+        if(whitePawns == 1 && redPawns == 1 && MandatoryMoves.size() == 0){
             for (int i = 0 ; i < ROWS; i++){
                 for (int j = 0; j < COLUMNS; j++){
                     if(PAWN[i][j] != null && !PAWN[i][j].isQueen()){
@@ -1050,7 +1056,10 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
                 }
             }
         }
-        return true;
+        else{
+            return true;
+        }
+        return false;
     }
 
     private void CheckIfTheGameHasBeenEnded() {
@@ -1090,7 +1099,7 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
                     return;
                 }
             }
-            if(CheckIfWinIsPossible()){
+            if(!CheckIfWinIsPossible()){
                 Game.setWinner("DRAW");
                 Game.setGameStatus(false);
                 System.out.println("REMIS POPRZEZ BRAK DOSTATENCZEGO MATERIALU DO ZWYCIESTWA");
