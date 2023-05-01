@@ -1,16 +1,15 @@
 public class Player extends Thread{
-    final String Color;
-    private final boolean isComputer;
-    final int ID;
-    public Pawn[] Figures = new Pawn[12];
-    Player(String color, int id, boolean isComputer)
+    private final String Color;
+    Player(String color)
     {
         this.Color = color;
-        this.ID = id;
-        this.isComputer = isComputer;
     }
 
-    public boolean isComputer() {
-        return isComputer;
+    public String getColor() {
+        return Color;
     }
+// przesylac dane za pomoca intow np.
+    // 0 - puste pole 1 bialy pion 2 biala krolowa 3 czerwony pion 4 czerwona damka itd.
+    // do tego watek na odczytywanie timera
+
 }

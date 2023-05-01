@@ -22,15 +22,17 @@ public class MoveTimer extends JPanel {
 
     public void StartTimer() {
 
+
+
         ActionListener taskPerformer = evt -> {
 
-            if (TimeLeft == 0 || !Game.GAME) {
-                Game.GAME = false;
+            if (TimeLeft == 0 || !Game.getGameStatus()) {
+                Game.setGameStatus(false);
                 ((Timer)evt.getSource()).stop();
                 return;
             }
 
-            if(Game.MOVE.equals(PawnColor))
+            if(Game.getMOVE().equals(PawnColor))
             {
                 TimeLeft--;
                 int minute = TimeLeft / 60;

@@ -49,19 +49,13 @@ public class Pawn{
 
     public void CheckUpgrade()
     {
-        if(Color.equals("RED"))
-        {
-            if(Y / FIELD_SIZE == 7)
-            {
-                System.out.println("CZERWONA DAMECZKA!");
+        if(Color.equals("RED")) {
+            if(Y / FIELD_SIZE == 7) {
                 IsQueen = true;
             }
         }
-        else
-        {
-            if(Y == 0)
-            {
-                System.out.println("BIALA DAMECZKA!");
+        else {
+            if(Y == 0) {
                 IsQueen = true;
             }
         }

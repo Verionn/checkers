@@ -17,9 +17,10 @@ public class Bot extends Thread{
         Point StartingPoint;
         Point TargetPoint;
 
-        while(Game.GAME)
+        while(Game.getGameStatus())
         {
-            if(Game.MOVE.equals(color)) {
+            String move = Game.getMOVE();
+            if(move.equals(color)) {
                 Vector<CapturePath> Captures = board.getMandatoryMoves();
                 if(Captures.size() != 0) {
                     int index = RandANumber(Captures.size());
@@ -43,7 +44,7 @@ public class Bot extends Thread{
             }
             else{
                 try {
-                    sleep(2500);
+                    sleep(1500);
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
                 }

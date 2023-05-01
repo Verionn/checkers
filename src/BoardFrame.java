@@ -13,8 +13,8 @@ public class BoardFrame extends JFrame {
         setTitle("Checkers");
         setResizable(false);
         setLayout(null);
-        add(new MoveTimer(WHITE_TIMER_POS_X, WHITE_TIMER_POS_Y, "WHITE", Game.Game_Length));
-        add(new MoveTimer(RED_TIMER_POS_X, RED_TIMER_POS_Y, "RED", Game.Game_Length));
+        add(new MoveTimer(WHITE_TIMER_POS_X, WHITE_TIMER_POS_Y, "WHITE", Game.GAME_LENGTH));
+        add(new MoveTimer(RED_TIMER_POS_X, RED_TIMER_POS_Y, "RED", Game.GAME_LENGTH));
         setVisible(true);
         WaitForEndOfTheGame(this);
     }
@@ -22,7 +22,7 @@ public class BoardFrame extends JFrame {
     public void WaitForEndOfTheGame(JFrame parent) {
 
         Timer timer = new Timer(1000, e -> {
-            if(!Game.GAME) {
+            if(!Game.getGameStatus()) {
                 new EndGamePanel(parent);
                 ((Timer)e.getSource()).stop();
 

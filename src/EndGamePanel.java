@@ -3,7 +3,7 @@ import java.awt.*;
 
 public class EndGamePanel extends JFrame {
     public EndGamePanel(JFrame parent) {
-        Game.MOVE = "NOONE";
+        Game.setMove("NOONE");
         setTitle("GAME OVER");
         setLocationRelativeTo(parent);
         setBounds(450, 450, 300, 300);
@@ -11,7 +11,7 @@ public class EndGamePanel extends JFrame {
         setResizable(false);
 
         JLabel EndGameInformation = new JLabel();
-        EndGameInformation.setText(Game.WINNER + " PAWNS WON");
+        EndGameInformation.setText(Game.getWinner() + " PAWNS WON");
 
         //TODO: poprawic to bo moze sie wyswietlic DRAW PAWNS WON XD
 
