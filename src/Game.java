@@ -1,36 +1,25 @@
+import java.io.IOException;
 import java.util.Random;
+import java.util.concurrent.TimeUnit;
 
 public class Game {
     private static String TypeOfGame = "NORMAL";
-    private static final String GameWithoutBot = "NONE";
-    private Player FirstPlayer;
-    private Player SecondPlayer;
-    private static boolean GAME_STATUS = true;
+    private static final String GAME_WITHOUT_BOT = "NONE";
     private static String MOVE = "WHITE";
+    private static final int MAX_PLAYERS = 2;
+    private static boolean GAME_STATUS = true;
+    private static boolean NOT_CONNECTED = true;
     private static String WINNER;
+    private String botColor;
     private static int WHITE_PAWNS;
     private static int RED_PAWNS;
     public static final int GAME_LENGTH = 300;
-    private final BoardFrame boardFrame;
+    private BoardFrame boardFrame;
+    private int onlinePlayers = 0;
 
-    private void RandomColors() {
-        Random rand = new Random();
-        int RandomNumber = rand.nextInt(2);
 
-        if(RandomNumber == 0) {
-            FirstPlayer = new Player("RED");
-            SecondPlayer = new Player("WHITE");
-        }
-        else
-        {
-            SecondPlayer = new Player("RED");
-            FirstPlayer = new Player("WHITE");
-        }
-    }
     public Game(String type) {
         setSettings();
-        RandomColors();
-        boardFrame = new BoardFrame();
         TypeOfGame = type;
         SelectMode();
     }
@@ -43,25 +32,56 @@ public class Game {
         RED_PAWNS = 0;
 
     }
-    private void SelectMode(){
+    private void SelectMode() {
         Board board;
         if (TypeOfGame.equals("NORMAL")) {
-            board = new Board("NORMAL", GameWithoutBot);
+            boardFrame = new BoardFrame();
+            board = new Board("NORMAL", GAME_WITHOUT_BOT);
             boardFrame.add(board);
-            return;
         }
         if(TypeOfGame.equals("BOT"))
         {
-            board = new Board("BOT", SecondPlayer.getColor());
+            boardFrame = new BoardFrame();
+            randBotColor();
+            board = new Board("BOT", botColor);
             boardFrame.add(board);
-            Thread bot = new Bot(SecondPlayer.getColor(), board);
+            Thread bot = new Bot(botColor, board);
             bot.start();
 
         }
         else if(TypeOfGame.equals("ONLINE")){
-            board = new Board("ONLINE", GameWithoutBot);
-            boardFrame.add(board);
 
+            while(NOT_CONNECTED){
+                try{
+
+                    System.out.println("TWORZE GRACZA!");
+                    Player player = new Player();
+                    player.connectToServer();
+                    NOT_CONNECTED = false;
+                } catch (IOException e) {
+
+                    Thread server = new Server();
+                    server.start();
+
+                    try {
+                        TimeUnit.SECONDS.sleep(2);
+                    } catch (InterruptedException x) {
+                        System.out.println("Interrupted! " + x);
+                    }
+                }
+            }
+        }
+    }
+
+    private void randBotColor() {
+        Random rand = new Random();
+        int RandomNumber = rand.nextInt(2);
+
+        if(RandomNumber == 0) {
+            botColor = "RED";
+        }
+        else {
+            botColor = "WHITE";
         }
     }
 

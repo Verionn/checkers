@@ -1,4 +1,6 @@
-public class Move {
+import java.io.Serializable;
+
+public class Move implements Serializable {
     private final int PosX;
     private final int PosY;
 
@@ -26,5 +28,13 @@ public class Move {
 
     public int getTargetY() {
         return TargetY;
+    }
+
+    public Point getStartingPoint(){
+        return new Point(PosX, PosY);
+    }
+
+    public Point getTargetPoint(){
+        return new Point(TargetX, TargetY);
     }
 }

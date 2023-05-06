@@ -30,7 +30,7 @@ public class Bot extends Thread{
                     StartingPoint = path.getStartingPoint();
                     TargetPoint = moves.get(0);
 
-                    board.MakeMove(StartingPoint, TargetPoint);
+                    board.MakeMove(StartingPoint, TargetPoint, color);
                 } else{
                     Vector<Move> AvaiableMoves = board.getAvaiableMoves();
                     Move RandomMove = AvaiableMoves.get(RandANumber(AvaiableMoves.size()));
@@ -39,7 +39,7 @@ public class Bot extends Thread{
                     TargetPoint = new Point(RandomMove.getTargetX(), RandomMove.getTargetY());
 
 
-                    board.MakeMove(StartingPoint, TargetPoint);
+                    board.MakeMove(StartingPoint, TargetPoint, color);
                 }
             }
             else{

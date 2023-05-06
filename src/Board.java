@@ -4,10 +4,6 @@ import java.awt.event.*;
 import java.util.Vector;
 
 import static java.lang.Math.abs;
-
-
-//TODO:
-//Wysrodkowac napisy przy remisie
 public class Board extends JPanel implements MouseListener, MouseMotionListener {
     private final String GameMode;
     private final String BotColor;
@@ -24,11 +20,13 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
     private final String PAWN_TYPE = "Pawn";
     public static final String WHITE_COLOR = "WHITE";
     public static final String RED_COLOR = "RED";
+    private final String[] Directions = {"LeftTop", "RightTop", "LeftBottom", "RightBottom"};
     private final double DIFF_BETWEEN_FIELDS = ReturnDistanceBetweenPoints(new Point(2, 2), new Point(4, 4));
+
     private int SELECTED_PAWN_X;
     private int SELECTED_PAWN_Y;
+
     private final Pawn[][] PAWN = new Pawn[ROWS][COLUMNS];
-    private final String[] Directions = {"LeftTop", "RightTop", "LeftBottom", "RightBottom"};
     private final Vector<Pawn> PawnsWhichCanCapture = new Vector<>();
     private final Vector<CapturePath> AllOptionsOfCapturingForSpecificPawn = new Vector<>();
     private final Vector<CapturePath> MandatoryMoves = new Vector<>();
@@ -60,7 +58,11 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
         BotColor = botColor;
     }
 
+    @Override
     public void paintComponent(Graphics g) {
+        if(GameMode.equals("ONLINE")){
+            return;
+        }
         Graphics2D g2d = (Graphics2D) g;
         PaintFields(g2d);
         PaintPawns(g2d);
@@ -78,13 +80,11 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
                 }
             }
         }
-
-
     }
 
     private void AddPieces() {
 
-        /*for (int i = 0; i < ROWS; i++) {
+        for (int i = 0; i < ROWS; i++) {
             for (int j = 0; j < COLUMNS; j++) {
                 if (i < 3 && (i + j) % 2 == 1) {
                     PAWN[i][j] = new Pawn(RED_COLOR, j * FIELD_SIZE, i * FIELD_SIZE, false);
@@ -95,18 +95,7 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
                     Game.increaseWhitePawns();
                 }
             }
-        }*/
-
-        PAWN[1][0] = new Pawn(WHITE_COLOR, 0 * FIELD_SIZE, 1 * FIELD_SIZE, false);
-        Game.increaseWhitePawns();
-        //PAWN[1][2] = new Pawn(WHITE_COLOR, 2 * FIELD_SIZE, 1 * FIELD_SIZE, false);
-        //Game.increaseWhitePawns();
-        PAWN[6][7] = new Pawn(RED_COLOR, 7 * FIELD_SIZE, 6 * FIELD_SIZE, false);
-        Game.increaseRedPawns();
-        PAWN[5][4] = new Pawn(RED_COLOR, 4 * FIELD_SIZE, 5 * FIELD_SIZE, false);
-        Game.increaseRedPawns();
-
-
+        }
     }
 
     private void PaintPawns(Graphics g2d) {
@@ -298,6 +287,10 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
         }
 
         return true;
+    }
+
+    public Pawn[][] getPAWN() {
+        return PAWN;
     }
 
     private Point ReturnMePositionOfCapturedPawn(Point first, Point second) {
@@ -1009,9 +1002,11 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
             return;
         }
         if (Game.getMove().equals(WHITE_COLOR)) {
+            System.out.println("ZMIENIAM RUCH Z WHITE NA RED");
             Game.setMove(RED_COLOR);
         }
         else {
+            System.out.println("ZMIENIAM RUCH Z RED NA WHITE");
             Game.setMove(WHITE_COLOR);
         }
         MandatoryMoves.clear();
@@ -1117,7 +1112,7 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
         }
     }
 
-    public void MakeMove(Point StartingPoint, Point TargetPoint){
+    public void MakeMove(Point StartingPoint, Point TargetPoint, String color){
         int StartingX = StartingPoint.getX();
         int StartingY = StartingPoint.getY();
 
@@ -1125,6 +1120,11 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
         int TargetY = TargetPoint.getY();
 
         if(PAWN[StartingY][StartingX] == null) {
+            return;
+        }
+
+        if(!PAWN[StartingY][StartingX].getColor().equals(color)) {
+            System.out.println("Gracz ruszyl sie nie swoim pionkiem");
             return;
         }
 
@@ -1152,7 +1152,24 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
         repaint();
         CheckIfTheGameHasBeenEnded();
         PawnsWhichCanCapture.clear();
+    }
 
+    private void ReturnCapturePath() {
+
+        Pawn[][] CopyOfPawns = CloneArray(PAWN);
+
+        for (Pawn pawn : PawnsWhichCanCapture) {
+            ReturnCapturesOfSpecificPawn(pawn, new Point(pawn.getX(), pawn.getY()), CopyOfPawns);
+        }
+        int Max = ReturnSizeOfTheLongestCapturePath();
+
+        for (CapturePath Path : AllOptionsOfCapturingForSpecificPawn) {
+            Vector<Point> Moves = Path.getPath();
+            if (Moves.size() == Max) {
+                MandatoryMoves.add(Path);
+            }
+        }
+        AllOptionsOfCapturingForSpecificPawn.clear();
     }
 
     @Override
@@ -1167,24 +1184,6 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
             SELECTED_PAWN_Y = y;
             SELECTED_PAWN_X = x;
         }
-    }
-    private void ReturnCapturePath() {
-
-        Pawn[][] CopyOfPawns = CloneArray(PAWN);
-
-
-        for (Pawn pawn : PawnsWhichCanCapture) {
-            ReturnCapturesOfSpecificPawn(pawn, new Point(pawn.getX(), pawn.getY()), CopyOfPawns);
-        }
-        int Max = ReturnSizeOfTheLongestCapturePath();
-
-        for (CapturePath Path : AllOptionsOfCapturingForSpecificPawn) {
-            Vector<Point> Moves = Path.getPath();
-            if (Moves.size() == Max) {
-                MandatoryMoves.add(Path);
-            }
-        }
-        AllOptionsOfCapturingForSpecificPawn.clear();
     }
 
     @Override

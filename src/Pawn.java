@@ -3,7 +3,10 @@ import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;*/
 
-public class Pawn{
+import java.io.Serializable;
+import java.util.Objects;
+
+public class Pawn implements Serializable, Cloneable {
     /*private final static String WHITE_PAWN_IMAGE_PATH = "/home/verion/Pulpit/PO2/VIII - Project/Checkers/src/Images/White_Pawn.png";
     private final static String RED_PAWN_IMAGE_PATH = "/home/verion/Pulpit/PO2/VIII - Project/Checkers/src/Images/Red_Pawn.png";*/
     private static final int FIELD_SIZE = 80;
@@ -11,7 +14,7 @@ public class Pawn{
 
     /*private static final ImageIcon RedPawn = new ImageIcon(RED_PAWN_IMAGE_PATH);
     private static final ImageIcon WhitePawn = new ImageIcon(WHITE_PAWN_IMAGE_PATH);*/
-    private boolean IsQueen = false;
+    private boolean IsQueen;
     private int X;
     private int Y;
 
@@ -47,8 +50,7 @@ public class Pawn{
         return IsQueen;
     }
 
-    public void CheckUpgrade()
-    {
+    public void CheckUpgrade() {
         if(Color.equals("RED")) {
             if(Y / FIELD_SIZE == 7) {
                 IsQueen = true;
@@ -58,6 +60,15 @@ public class Pawn{
             if(Y == 0) {
                 IsQueen = true;
             }
+        }
+    }
+
+    @Override
+    public Pawn clone() {
+        try {
+            return (Pawn) super.clone();
+        } catch (CloneNotSupportedException e) {
+            throw new RuntimeException(e);
         }
     }
 }

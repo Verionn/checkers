@@ -56,6 +56,9 @@ public class Menu extends JFrame{
             new Game("BOT");
         });
 
-        Online.addActionListener(e -> JOptionPane.showMessageDialog(frame, "Ziomal na drugim kompie"));
+        Online.addActionListener(e -> {
+            frame.dispose();
+            new Game("ONLINE");
+        });
     }
 }
