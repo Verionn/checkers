@@ -14,12 +14,14 @@ public class Player extends JPanel implements MouseListener, MouseMotionListener
     private static final int FIELD_SIZE = 80;
     private static final int PAWN_SIZE = 60;
     private static final int PAWN_OFFSET = 10;
-    private static final int SMALL_Pawn_SIZE = 20;
-    private static final int SMALL_Pawn_OFFSET = 30;
+    private static final int SMALL_PAWN_SIZE = 20;
+    private static final int SMALL_PAWN_OFFSET = 30;
     private static final int QUEEN_SIZE = 30;
     private static final int QUEEN_OFFSET = 25;
     private static final int ROWS = 8;
     private static final int COLUMNS = 8;
+    private static final int BOARD_ARRAY_SIZE = 7;
+    private static final int BOARD_SIZE = BOARD_ARRAY_SIZE * FIELD_SIZE;
     public static final String WHITE_COLOR = "WHITE";
     public static final String RED_COLOR = "RED";
 
@@ -64,36 +66,76 @@ public class Player extends JPanel implements MouseListener, MouseMotionListener
     }
 
     private void paintPawns(Graphics g2d) {
-        for (int i = 0; i < ROWS; i++) {
-            for (int j = 0; j < COLUMNS; j++) {
-                if (pawn[i][j] != null)
-                {
-                    if(!pawn[i][j].isQueen()) {
-                        if (pawn[i][j].getColor().equals(RED_COLOR)) {
-                            g2d.setColor(Color.RED);
-                            g2d.fillOval(pawn[i][j].getX() + PAWN_OFFSET, pawn[i][j].getY() + PAWN_OFFSET, PAWN_SIZE, PAWN_SIZE);
-                        } else {
-                            g2d.setColor(Color.WHITE);
-                            g2d.fillOval(pawn[i][j].getX() + PAWN_OFFSET, pawn[i][j].getY() + PAWN_OFFSET, PAWN_SIZE, PAWN_SIZE);
+        if(color.equals(RED_COLOR)){
+            for (int i = 0; i < ROWS; i++) {
+                for (int j = 0; j < COLUMNS; j++) {
+                    if (pawn[i][j] != null)
+                    {
+                        if(!pawn[i][j].isQueen()) {
+                            if (pawn[i][j].getColor().equals(RED_COLOR)) {
+                                g2d.setColor(Color.RED);
+                                g2d.fillOval(BOARD_SIZE - pawn[i][j].getX() + PAWN_OFFSET, BOARD_SIZE - pawn[i][j].getY() + PAWN_OFFSET, PAWN_SIZE, PAWN_SIZE);
+                            } else {
+                                g2d.setColor(Color.WHITE);
+                                g2d.fillOval(BOARD_SIZE - pawn[i][j].getX() + PAWN_OFFSET, BOARD_SIZE - pawn[i][j].getY() + PAWN_OFFSET, PAWN_SIZE, PAWN_SIZE);
+                            }
+                        }
+                        else
+                        {
+                            if (pawn[i][j].getColor().equals(RED_COLOR)) {
+                                g2d.setColor(Color.RED);
+                                g2d.fillOval(BOARD_SIZE - pawn[i][j].getX() + PAWN_OFFSET, BOARD_SIZE -  pawn[i][j].getY() + PAWN_OFFSET, PAWN_SIZE, PAWN_SIZE);
+                                g2d.setColor(Color.WHITE);
+                                g2d.fillOval(BOARD_SIZE - pawn[i][j].getX() + QUEEN_OFFSET , BOARD_SIZE -  pawn[i][j].getY() + QUEEN_OFFSET, QUEEN_SIZE, QUEEN_SIZE);
+                                g2d.setColor(Color.RED);
+                                g2d.fillOval(BOARD_SIZE - pawn[i][j].getX() + SMALL_PAWN_OFFSET, BOARD_SIZE - pawn[i][j].getY() + SMALL_PAWN_OFFSET, SMALL_PAWN_SIZE, SMALL_PAWN_SIZE);
+                            } else {
+                                g2d.setColor(Color.WHITE);
+                                g2d.fillOval(BOARD_SIZE - pawn[i][j].getX() + PAWN_OFFSET, BOARD_SIZE - pawn[i][j].getY() + PAWN_OFFSET, PAWN_SIZE, PAWN_SIZE);
+                                g2d.setColor(Color.RED);
+                                g2d.fillOval(BOARD_SIZE - pawn[i][j].getX() + QUEEN_OFFSET, BOARD_SIZE - pawn[i][j].getY() + QUEEN_OFFSET, QUEEN_SIZE, QUEEN_SIZE);
+                                g2d.setColor(Color.WHITE);
+                                g2d.fillOval(BOARD_SIZE - pawn[i][j].getX() + SMALL_PAWN_OFFSET, BOARD_SIZE - pawn[i][j].getY() + SMALL_PAWN_OFFSET, SMALL_PAWN_SIZE, SMALL_PAWN_SIZE);
+
+                            }
                         }
                     }
-                    else
-                    {
-                        if (pawn[i][j].getColor().equals(RED_COLOR)) {
-                            g2d.setColor(Color.RED);
-                            g2d.fillOval(pawn[i][j].getX() + PAWN_OFFSET, pawn[i][j].getY() + PAWN_OFFSET, PAWN_SIZE, PAWN_SIZE);
-                            g2d.setColor(Color.WHITE);
-                            g2d.fillOval(pawn[i][j].getX() + QUEEN_OFFSET , pawn[i][j].getY() + QUEEN_OFFSET, QUEEN_SIZE, QUEEN_SIZE);
-                            g2d.setColor(Color.RED);
-                            g2d.fillOval(pawn[i][j].getX() + SMALL_Pawn_OFFSET , pawn[i][j].getY() + SMALL_Pawn_OFFSET, SMALL_Pawn_SIZE, SMALL_Pawn_SIZE);
-                        } else {
-                            g2d.setColor(Color.WHITE);
-                            g2d.fillOval(pawn[i][j].getX() + PAWN_OFFSET, pawn[i][j].getY() + PAWN_OFFSET, PAWN_SIZE, PAWN_SIZE);
-                            g2d.setColor(Color.RED);
-                            g2d.fillOval(pawn[i][j].getX() + QUEEN_OFFSET , pawn[i][j].getY() + QUEEN_OFFSET, QUEEN_SIZE, QUEEN_SIZE);
-                            g2d.setColor(Color.WHITE);
-                            g2d.fillOval(pawn[i][j].getX() + SMALL_Pawn_OFFSET , pawn[i][j].getY() + SMALL_Pawn_OFFSET, SMALL_Pawn_SIZE, SMALL_Pawn_SIZE);
+                }
+            }
 
+        }
+        else{
+            for (int i = 0; i < ROWS; i++) {
+                for (int j = 0; j < COLUMNS; j++) {
+                    if (pawn[i][j] != null)
+                    {
+                        if(!pawn[i][j].isQueen()) {
+                            if (pawn[i][j].getColor().equals(RED_COLOR)) {
+                                g2d.setColor(Color.RED);
+                                g2d.fillOval(pawn[i][j].getX() + PAWN_OFFSET, pawn[i][j].getY() + PAWN_OFFSET, PAWN_SIZE, PAWN_SIZE);
+                            } else {
+                                g2d.setColor(Color.WHITE);
+                                g2d.fillOval(pawn[i][j].getX() + PAWN_OFFSET, pawn[i][j].getY() + PAWN_OFFSET, PAWN_SIZE, PAWN_SIZE);
+                            }
+                        }
+                        else
+                        {
+                            if (pawn[i][j].getColor().equals(RED_COLOR)) {
+                                g2d.setColor(Color.RED);
+                                g2d.fillOval(pawn[i][j].getX() + PAWN_OFFSET, pawn[i][j].getY() + PAWN_OFFSET, PAWN_SIZE, PAWN_SIZE);
+                                g2d.setColor(Color.WHITE);
+                                g2d.fillOval(pawn[i][j].getX() + QUEEN_OFFSET , pawn[i][j].getY() + QUEEN_OFFSET, QUEEN_SIZE, QUEEN_SIZE);
+                                g2d.setColor(Color.RED);
+                                g2d.fillOval(pawn[i][j].getX() + SMALL_PAWN_OFFSET , pawn[i][j].getY() + SMALL_PAWN_OFFSET, SMALL_PAWN_SIZE, SMALL_PAWN_SIZE);
+                            } else {
+                                g2d.setColor(Color.WHITE);
+                                g2d.fillOval(pawn[i][j].getX() + PAWN_OFFSET, pawn[i][j].getY() + PAWN_OFFSET, PAWN_SIZE, PAWN_SIZE);
+                                g2d.setColor(Color.RED);
+                                g2d.fillOval(pawn[i][j].getX() + QUEEN_OFFSET , pawn[i][j].getY() + QUEEN_OFFSET, QUEEN_SIZE, QUEEN_SIZE);
+                                g2d.setColor(Color.WHITE);
+                                g2d.fillOval(pawn[i][j].getX() + SMALL_PAWN_OFFSET , pawn[i][j].getY() + SMALL_PAWN_OFFSET, SMALL_PAWN_SIZE, SMALL_PAWN_SIZE);
+
+                            }
                         }
                     }
                 }
@@ -103,7 +145,7 @@ public class Player extends JPanel implements MouseListener, MouseMotionListener
 
     public void getData() {
 
-        BoardInfo Data = null;
+        BoardInfo Data;
         try {
             Data = (BoardInfo) objectInputStream.readObject();
             System.out.println("ODEBRALEM DANE!");
@@ -151,6 +193,19 @@ public class Player extends JPanel implements MouseListener, MouseMotionListener
         serverListener.start();
      }
 
+    public void reverseBoard(){
+
+        Pawn[][] reversePawn = new Pawn[ROWS][COLUMNS];
+
+        for (int i = 0 ; i < ROWS; i++){
+            for (int j = 0; j < COLUMNS; j++){
+                if(pawn[i][j] != null){
+                    reversePawn[ROWS-i][COLUMNS-j] = pawn[i][j];
+                }
+            }
+        }
+    }
+
     public void setPawn(Pawn[][] pawn) {
         this.pawn = pawn;
     }
@@ -166,20 +221,39 @@ public class Player extends JPanel implements MouseListener, MouseMotionListener
 
     @Override
     public void mousePressed(MouseEvent e) {
-        int x = e.getX()/FIELD_SIZE;
-        int y = e.getY()/FIELD_SIZE;
-        if(pawn[y][x] != null)
-        {
-            SELECTED_PAWN_Y = y;
-            SELECTED_PAWN_X = x;
+        if(color.equals(RED_COLOR)) {
+            int x = BOARD_SIZE / FIELD_SIZE - e.getX() / FIELD_SIZE;
+            int y = BOARD_SIZE / FIELD_SIZE - e.getY() / FIELD_SIZE;
+            if(pawn[y][x] != null)
+            {
+                SELECTED_PAWN_Y = y; //BOARD_ARRAY_SIZE - y;
+                SELECTED_PAWN_X = x; //BOARD_ARRAY_SIZE - x;
+                System.out.println("SELECTED: " + x + " | "+ y);
+            }
+        }
+        else{
+            int x = e.getX() / FIELD_SIZE;
+            int y = e.getY() / FIELD_SIZE;
+            if(pawn[y][x] != null)
+            {
+                SELECTED_PAWN_Y = y;
+                SELECTED_PAWN_X = x;
+            }
         }
     }
 
     @Override
     public void mouseReleased(MouseEvent e) {
 
-        int x = e.getX()/FIELD_SIZE;
-        int y = e.getY()/FIELD_SIZE;
+        int x, y;
+        if(color.equals(RED_COLOR)){
+            x = BOARD_SIZE / FIELD_SIZE - e.getX() / FIELD_SIZE;
+            y = BOARD_SIZE / FIELD_SIZE - e.getY() / FIELD_SIZE;
+        }
+        else{
+            x = e.getX() / FIELD_SIZE;
+            y = e.getY() / FIELD_SIZE;
+        }
 
         System.out.println(SELECTED_PAWN_X + " | " + SELECTED_PAWN_Y);
 
@@ -188,7 +262,7 @@ public class Player extends JPanel implements MouseListener, MouseMotionListener
         }
         System.out.println("PLAYER: RUCH: " + Game.getMove());
         if(move.equals(color)) {
-            System.out.println("WYSYLAM RUCH! " + color);
+            System.out.println("WYSYLAM RUCH! " + SELECTED_PAWN_X + " | " + SELECTED_PAWN_Y + " | " + x + " | " + y);
             Move move = new Move(SELECTED_PAWN_X, SELECTED_PAWN_Y, x, y);
             sendData(move);
         }
@@ -213,8 +287,16 @@ public class Player extends JPanel implements MouseListener, MouseMotionListener
     @Override
     public void mouseDragged(MouseEvent e) {
         if(pawn[SELECTED_PAWN_Y][SELECTED_PAWN_X] != null) {
-            pawn[SELECTED_PAWN_Y][SELECTED_PAWN_X].setX(e.getX() - FIELD_SIZE / 2);
-            pawn[SELECTED_PAWN_Y][SELECTED_PAWN_X].setY(e.getY() - FIELD_SIZE / 2);
+            if(color.equals(RED_COLOR)){
+                System.out.println("PRZESUWAM: " + SELECTED_PAWN_X + " | " + SELECTED_PAWN_Y);
+                pawn[SELECTED_PAWN_Y][SELECTED_PAWN_X].setX(BOARD_SIZE - e.getX() + FIELD_SIZE / 2);
+                pawn[SELECTED_PAWN_Y][SELECTED_PAWN_X].setY(BOARD_SIZE - e.getY() + FIELD_SIZE / 2);
+            }
+            else{
+                System.out.println("PRZESUWAM: " + SELECTED_PAWN_X + " | " + SELECTED_PAWN_Y);
+                pawn[SELECTED_PAWN_Y][SELECTED_PAWN_X].setX(e.getX() - FIELD_SIZE / 2);
+                pawn[SELECTED_PAWN_Y][SELECTED_PAWN_X].setY(e.getY() - FIELD_SIZE / 2);
+            }
             repaint();
         }
     }
