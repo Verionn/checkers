@@ -73,7 +73,7 @@ public class Server extends Thread{
                 objectInputStream = new ObjectInputStream(connection.getInputStream());
 
                 socket[onlinePlayers] = new ConnectionInfo(objectInputStream, objectOutputStream, playerColor[onlinePlayers]);
-                timeHandler[onlinePlayers] = new TimeHandler(objectOutputStream, board, this);
+                timeHandler[onlinePlayers] = new TimeHandler(objectOutputStream, objectInputStream, board, this);
 
                 onlinePlayers++;
 
@@ -93,7 +93,6 @@ public class Server extends Thread{
         }
 
         while (Game.getGameStatus()){
-            System.out.println("GŁOWNA PETELKA");
             BoardInfo boardInfo = new BoardInfo();
 
             Pawn[][] pawns = board.getPAWN();
@@ -108,10 +107,10 @@ public class Server extends Thread{
             }
 
             boardInfo.setPawn(newPawns);
+            int playerID = getPlayerID(Game.getMove());
 
             try {
                 for (int j = 0; j < MAX_PLAYERS; j++){
-                    System.out.println("SEND DATA");
                     boardInfo.setColor(socket[j].getColor());
                     boardInfo.setMove(Game.getMove());
                     socket[j].getOutput().writeObject(boardInfo);
@@ -120,22 +119,30 @@ public class Server extends Thread{
 
                 DataSend = true;
 
-                int playerID = getPlayerID(Game.getMove());
                 Move move = (Move) socket[playerID].getInput().readObject();
 
                 board.MakeMove(move.getStartingPoint(), move.getTargetPoint(), socket[playerID].getColor());
-                System.out.println("SERVER: RUCH: " + Game.getMove());
 
             } catch (IOException | ClassNotFoundException e) {
+                System.out.println("SERVER: Player left!\nWinning color: " + returnOppositeColor(socket[playerID].getColor()));
+                Game.setWinner(returnOppositeColor(socket[playerID].getColor()));
+                Game.setGameStatus(false);
                 throw new RuntimeException(e);
             }
+        }
+    }
+    private String returnOppositeColor(String Color){
+        if(Color.equals("RED")){
+            return "WHITE";
+        }
+        else{
+            return "RED";
         }
     }
 
     private void checkIfTheGameEnded(Board actualBoard){
         if(actualBoard.getWhiteTimeLeft() == 0 || actualBoard.getRedTimeLeft() == 0){
             Game.setGameStatus(false);
-            System.out.println("Zmieniam status serwera");
         }
     }
 

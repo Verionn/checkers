@@ -1079,12 +1079,18 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
                 Game.setWinner(RED_COLOR);
                 Game.setGameStatus(false);
                 System.out.println("KONIEC GRY ZWYCIESTWO Czerwonych");
+                if(!GameMode.equals("ONLINE")){
+                    new EndGamePanel(Screen, Game.getWinner());
+                }
                 return;
             }
             else if (redPawns == 0) {
                 Game.setWinner(WHITE_COLOR);
                 Game.setGameStatus(false);
                 System.out.println("KONIEC GRY - ZWYCIESTWO Bialych");
+                if(!GameMode.equals("ONLINE")){
+                    new EndGamePanel(Screen, Game.getWinner());
+                }
                 return;
             }
             if(AvailableMoves.size() == 0 && MandatoryMoves.size() == 0)
@@ -1094,6 +1100,9 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
                     Game.setWinner(WHITE_COLOR);
                     Game.setGameStatus(false);
                     System.out.println("CZERWONE BRAK RUCHOW");
+                    if(!GameMode.equals("ONLINE")){
+                        new EndGamePanel(Screen, Game.getWinner());
+                    }
                     return;
                 }
                 else if(move.equals(WHITE_COLOR))
@@ -1101,6 +1110,9 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
                     Game.setWinner(RED_COLOR);
                     Game.setGameStatus(false);
                     System.out.println("BIALE BRAK RUCHOW");
+                    if(!GameMode.equals("ONLINE")){
+                        new EndGamePanel(Screen, Game.getWinner());
+                    }
                     return;
                 }
             }
@@ -1108,6 +1120,9 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
                 Game.setWinner("DRAW");
                 Game.setGameStatus(false);
                 System.out.println("REMIS POPRZEZ BRAK DOSTATENCZEGO MATERIALU DO ZWYCIESTWA");
+                if(!GameMode.equals("ONLINE")){
+                    new EndGamePanel(Screen, Game.getWinner());
+                }
                 return;
             }
             if (whitePawns > redPawns) {
@@ -1208,9 +1223,6 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
                 if(!GameMode.equals("ONLINE")){
                     MoveTimer redTimer = Screen.getRedTimer();
                     redTimer.updateTimer(redTimeLeft);
-                    if(redTimeLeft == 0){
-                        new EndGamePanel(Screen, Game.getWinner());
-                    }
                 }
             }
             if(Game.getMove().equals(WHITE_COLOR))
@@ -1219,9 +1231,6 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
                 if(!GameMode.equals("ONLINE")){
                     MoveTimer whiteTimer = Screen.getWhiteTimer();
                     whiteTimer.updateTimer(whiteTimeLeft);
-                    if(whiteTimeLeft == 0){
-                        new EndGamePanel(Screen, Game.getWinner());
-                    }
                 }
             }
         };

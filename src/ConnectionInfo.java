@@ -2,8 +2,8 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
 public class ConnectionInfo {
-    private ObjectInputStream input;
-    private ObjectOutputStream output;
+    private final ObjectInputStream input;
+    private final ObjectOutputStream output;
     private String color;
 
     public ConnectionInfo(ObjectInputStream input, ObjectOutputStream output, String color) {
@@ -22,9 +22,5 @@ public class ConnectionInfo {
 
     public String getColor() {
         return color;
-    }
-
-    public void setColor(String color) {
-        this.color = color;
     }
 }

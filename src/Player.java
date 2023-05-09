@@ -172,18 +172,15 @@ public class Player extends JPanel implements MouseListener, MouseMotionListener
 
         try{
             Object receivedData = objectInputStream.readObject();
-            System.out.println("OTRZYMALEM OBIEKT");
             if(receivedData instanceof BoardInfo){
-                System.out.println("OTRZYMALEM PLANSZE");
                 setPawn(((BoardInfo) receivedData).getPawn());
                 setMove(((BoardInfo) receivedData).getMove());
                 setColor(((BoardInfo) receivedData).getColor());
                 repaint();
             }
-            else if(receivedData instanceof MoveLeftTime){
-                System.out.println("OTRZYMALEM CZAS");
-                redTimer.updateTimer(((MoveLeftTime) receivedData).getRedLeftTime());
-                whiteTimer.updateTimer(((MoveLeftTime) receivedData).getWhiteLeftTime());
+            else if(receivedData instanceof PlayersTime){
+                redTimer.updateTimer(((PlayersTime) receivedData).getRedLeftTime());
+                whiteTimer.updateTimer(((PlayersTime) receivedData).getWhiteLeftTime());
                 whiteTimer.repaint();
                 redTimer.repaint();
             }
@@ -195,10 +192,10 @@ public class Player extends JPanel implements MouseListener, MouseMotionListener
 
     public void connectToServer() throws IOException {
         while(true){
-            System.out.println("LACZE SIE!");
             Socket connection = new Socket("127.0.0.1", 5036);
             if(connection.isConnected()){
 
+                System.out.println("Connection successful");
                 screen = new Screen();
                 redTimer = screen.getRedTimer();
                 whiteTimer = screen.getWhiteTimer();
@@ -211,7 +208,7 @@ public class Player extends JPanel implements MouseListener, MouseMotionListener
             }
         }
 
-        Thread serverListener = new ServerListener(objectInputStream, this, whiteTimer, redTimer, screen);
+        Thread serverListener = new ServerListener(objectInputStream, objectOutputStream,this, whiteTimer, redTimer, screen, color);
         serverListener.start();
     }
 
@@ -236,9 +233,8 @@ public class Player extends JPanel implements MouseListener, MouseMotionListener
             int y = BOARD_SIZE / FIELD_SIZE - e.getY() / FIELD_SIZE;
             if(pawn[y][x] != null)
             {
-                SELECTED_PAWN_Y = y; //BOARD_ARRAY_SIZE - y;
-                SELECTED_PAWN_X = x; //BOARD_ARRAY_SIZE - x;
-                System.out.println("SELECTED: " + x + " | "+ y);
+                SELECTED_PAWN_Y = y;
+                SELECTED_PAWN_X = x;
             }
         }
         else{
@@ -270,14 +266,11 @@ public class Player extends JPanel implements MouseListener, MouseMotionListener
         if(pawn[SELECTED_PAWN_Y][SELECTED_PAWN_X] == null) {
             return;
         }
-        System.out.println("PLAYER: RUCH: " + Game.getMove());
         if(move.equals(color)) {
-            System.out.println("WYSYLAM RUCH! " + SELECTED_PAWN_X + " | " + SELECTED_PAWN_Y + " | " + x + " | " + y);
             Move move = new Move(SELECTED_PAWN_X, SELECTED_PAWN_Y, x, y);
             sendData(move);
         }
         else{
-            System.out.println("COFAM! " + color);
             pawn[SELECTED_PAWN_Y][SELECTED_PAWN_X].setX(SELECTED_PAWN_X * FIELD_SIZE);
             pawn[SELECTED_PAWN_Y][SELECTED_PAWN_X].setY(SELECTED_PAWN_Y * FIELD_SIZE);
         }
