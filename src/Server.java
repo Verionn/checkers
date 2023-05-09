@@ -127,7 +127,6 @@ public class Server extends Thread{
                 System.out.println("SERVER: Player left!\nWinning color: " + returnOppositeColor(socket[playerID].getColor()));
                 Game.setWinner(returnOppositeColor(socket[playerID].getColor()));
                 Game.setGameStatus(false);
-                throw new RuntimeException(e);
             }
         }
     }

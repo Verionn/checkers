@@ -4,7 +4,7 @@ import java.io.ObjectOutputStream;
 public class ConnectionInfo {
     private final ObjectInputStream input;
     private final ObjectOutputStream output;
-    private String color;
+    private final String color;
 
     public ConnectionInfo(ObjectInputStream input, ObjectOutputStream output, String color) {
         this.input = input;

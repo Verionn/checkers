@@ -52,7 +52,7 @@ public class TimeHandler extends Thread{
             objectOutputStream.close();
             objectInputStream.close();
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            System.out.println("Server disabled!");
         }
 
     }

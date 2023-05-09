@@ -17,7 +17,7 @@ public class Game {
     private String botColor;
     private static int WHITE_PAWNS;
     private static int RED_PAWNS;
-    public static final int GAME_LENGTH = 200;
+    public static final int GAME_LENGTH = 5;
 
 
     public Game(String type) {

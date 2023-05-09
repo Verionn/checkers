@@ -31,8 +31,8 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
     private int SELECTED_PAWN_X;
     private int SELECTED_PAWN_Y;
 
-    private int redTimeLeft = Game.GAME_LENGTH;
-    private int whiteTimeLeft = Game.GAME_LENGTH;
+    private int redTimeLeft;
+    private int whiteTimeLeft;
 
     private final Pawn[][] PAWN = new Pawn[ROWS][COLUMNS];
     private final Vector<Pawn> PawnsWhichCanCapture = new Vector<>();
@@ -63,6 +63,8 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
         GameMode = type;
         BotColor = botColor;
         Screen = screen;
+        redTimeLeft = Game.GAME_LENGTH;
+        whiteTimeLeft = Game.GAME_LENGTH;
     }
 
     @Override
@@ -1209,10 +1211,16 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
 
         ActionListener taskPerformer = evt -> {
 
-            if (whiteTimeLeft == 0  || redTimeLeft == 0 || !Game.getGameStatus()) {
+            if (!Game.getGameStatus()) {
                 ((Timer)evt.getSource()).stop();
-                Game.setGameStatus(false);
                 return;
+            }
+
+            if(whiteTimeLeft == 0  || redTimeLeft == 0 ){
+                Game.setGameStatus(false);
+                if(!GameMode.equals("ONLINE")){
+                    new EndGamePanel(Screen, Game.getWinner());
+                }
             }
 
             System.out.println("RED: " + redTimeLeft + "WHITE: " + whiteTimeLeft);

@@ -228,6 +228,11 @@ public class Player extends JPanel implements MouseListener, MouseMotionListener
 
     @Override
     public void mousePressed(MouseEvent e) {
+
+        if(!Game.getGameStatus()){
+            return;
+        }
+
         if(color.equals(RED_COLOR)) {
             int x = BOARD_SIZE / FIELD_SIZE - e.getX() / FIELD_SIZE;
             int y = BOARD_SIZE / FIELD_SIZE - e.getY() / FIELD_SIZE;
@@ -250,6 +255,10 @@ public class Player extends JPanel implements MouseListener, MouseMotionListener
 
     @Override
     public void mouseReleased(MouseEvent e) {
+
+        if(!Game.getGameStatus()){
+            return;
+        }
 
         int x, y;
         if(color.equals(RED_COLOR)){
@@ -289,6 +298,9 @@ public class Player extends JPanel implements MouseListener, MouseMotionListener
 
     @Override
     public void mouseDragged(MouseEvent e) {
+        if(!Game.getGameStatus()){
+            return;
+        }
         if(pawn[SELECTED_PAWN_Y][SELECTED_PAWN_X] != null) {
             if(color.equals(RED_COLOR)){
                 pawn[SELECTED_PAWN_Y][SELECTED_PAWN_X].setX(BOARD_SIZE - e.getX() + FIELD_SIZE / 2);
