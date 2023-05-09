@@ -2,7 +2,7 @@ import javax.swing.*;
 import java.awt.*;
 
 public class EndGamePanel extends JFrame {
-    public EndGamePanel(JFrame parent) {
+    public EndGamePanel(JFrame parent, String Winner) {
         Game.setMove("NOONE");
         setTitle("GAME OVER");
         setLocationRelativeTo(parent);
@@ -10,17 +10,19 @@ public class EndGamePanel extends JFrame {
         setLayout(null);
         setResizable(false);
 
+
         JLabel EndGameInformation = new JLabel();
-        if(Game.getWinner().equals("DRAW")){
-            EndGameInformation.setText("DRAW");
+        if(Winner.equals("DRAW"))
+        {
+            EndGameInformation.setText("          DRAW");
         }
         else{
-            EndGameInformation.setText(Game.getWinner() + " PAWNS WON");
+            EndGameInformation.setText(Winner + " PAWNS WON");
         }
-
 
         EndGameInformation.setBounds(90,85, 200, 40);
         EndGameInformation.setBackground(Color.CYAN);
+
         add(EndGameInformation);
 
         JButton playButton = new JButton("Play Again");

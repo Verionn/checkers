@@ -7,6 +7,11 @@ import static java.lang.Math.abs;
 public class Board extends JPanel implements MouseListener, MouseMotionListener {
     private final String GameMode;
     private final String BotColor;
+    private final Screen Screen;
+
+    public static final Color Green = new Color(87, 170, 106);
+    public static final Color LightGray = new Color(242, 242, 225);
+
     private static final int FIELD_SIZE = 80;
     private static final int PAWN_SIZE = 60;
     private static final int PAWN_OFFSET = 10;
@@ -36,29 +41,28 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
     private final Vector<Move> AvailableMoves = new Vector<>();
 
     private static final int[][] INT_BOARD = {
-            {0, 2, 0, 2, 0, 2, 0, 2},
-            {2, 0, 2, 0, 2, 0, 2, 0},
-            {0, 2, 0, 2, 0, 2, 0, 2},
+            {0, 1, 0, 1, 0, 1, 0, 1},
             {1, 0, 1, 0, 1, 0, 1, 0},
             {0, 1, 0, 1, 0, 1, 0, 1},
-            {3, 0, 3, 0, 3, 0, 3, 0},
-            {0, 3, 0, 3, 0, 3, 0, 3},
-            {3, 0, 3, 0, 3, 0, 3, 0}
+            {1, 0, 1, 0, 1, 0, 1, 0},
+            {0, 1, 0, 1, 0, 1, 0, 1},
+            {1, 0, 1, 0, 1, 0, 1, 0},
+            {0, 1, 0, 1, 0, 1, 0, 1},
+            {1, 0, 1, 0, 1, 0, 1, 0}
     };
 
-    //0 - banned
-    //1 - empty
-    //2 - red pawns
-    //3 - white pawns
-    public Board(String type, String botColor) {
+    public Board(String type, String botColor, Screen screen) {
         setBounds(180, 180, 640, 640);
         setLayout(null);
+        setBorder(BorderFactory.createLineBorder(Green, 4));
         AddPieces();
         addMouseListener(this);
         addMouseMotionListener(this);
         CountMoves(Game.getMove());
+        setVisible(true);
         GameMode = type;
         BotColor = botColor;
+        Screen = screen;
     }
 
     @Override
@@ -75,10 +79,10 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
         for (int i = 0; i < ROWS; i++) {
             for (int j = 0; j < COLUMNS; j++) {
                 if ((i + j) % 2 == 0) {
-                    g2d.setColor(Color.WHITE);
+                    g2d.setColor(LightGray);
                     g2d.fillRect(j * FIELD_SIZE, i * FIELD_SIZE, FIELD_SIZE, FIELD_SIZE);
                 } else {
-                    g2d.setColor(Color.GREEN);
+                    g2d.setColor(Green);
                     g2d.fillRect(j * FIELD_SIZE, i * FIELD_SIZE, FIELD_SIZE, FIELD_SIZE);
                 }
             }
@@ -134,6 +138,8 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
 
                         }
                     }
+                    g2d.setColor(Color.BLACK);
+                    g2d.drawOval(PAWN[i][j].getX() + PAWN_OFFSET, PAWN[i][j].getY() + PAWN_OFFSET, PAWN_SIZE, PAWN_SIZE);
                 }
             }
         }
@@ -1185,22 +1191,38 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
     }
 
     public void startTimer() {
+
         ActionListener taskPerformer = evt -> {
 
             if (whiteTimeLeft == 0  || redTimeLeft == 0 || !Game.getGameStatus()) {
                 ((Timer)evt.getSource()).stop();
+                Game.setGameStatus(false);
                 return;
             }
 
             System.out.println("RED: " + redTimeLeft + "WHITE: " + whiteTimeLeft);
 
-            if(Game.getMove().equals("RED"))
+            if(Game.getMove().equals(RED_COLOR))
             {
                 redTimeLeft--;
+                if(!GameMode.equals("ONLINE")){
+                    MoveTimer redTimer = Screen.getRedTimer();
+                    redTimer.updateTimer(redTimeLeft);
+                    if(redTimeLeft == 0){
+                        new EndGamePanel(Screen, Game.getWinner());
+                    }
+                }
             }
-            if(Game.getMove().equals("WHITE"))
+            if(Game.getMove().equals(WHITE_COLOR))
             {
                 whiteTimeLeft--;
+                if(!GameMode.equals("ONLINE")){
+                    MoveTimer whiteTimer = Screen.getWhiteTimer();
+                    whiteTimer.updateTimer(whiteTimeLeft);
+                    if(whiteTimeLeft == 0){
+                        new EndGamePanel(Screen, Game.getWinner());
+                    }
+                }
             }
         };
 

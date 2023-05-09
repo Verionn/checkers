@@ -1,6 +1,6 @@
 import javax.swing.*;
 
-public class BoardFrame extends JFrame {
+public class Screen extends JFrame {
     public static final int WINDOW_HEIGHT = 1000;
     private static final int WINDOW_WIDTH = 1000;
     private static final int RED_TIMER_POS_X = 830;
@@ -12,10 +12,11 @@ public class BoardFrame extends JFrame {
     private final MoveTimer redTimer;
 
 
-    BoardFrame(){
+    Screen(){
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(WINDOW_WIDTH, WINDOW_HEIGHT);
         setTitle("Checkers");
+        setBackground(Board.LightGray);
         setResizable(false);
         setLayout(null);
         whiteTimer = new MoveTimer(WHITE_TIMER_POS_X, WHITE_TIMER_POS_Y, "WHITE", Game.GAME_LENGTH);
@@ -23,7 +24,6 @@ public class BoardFrame extends JFrame {
         add(whiteTimer);
         add(redTimer);
         setVisible(true);
-        WaitForEndOfTheGame(this);
     }
 
     public MoveTimer getWhiteTimer() {
@@ -32,17 +32,5 @@ public class BoardFrame extends JFrame {
 
     public MoveTimer getRedTimer() {
         return redTimer;
-    }
-
-    public void WaitForEndOfTheGame(JFrame parent) {
-
-        Timer timer = new Timer(1000, e -> {
-            if(!Game.getGameStatus()) {
-                new EndGamePanel(parent);
-                ((Timer)e.getSource()).stop();
-
-            }
-        });
-        timer.start();
     }
 }

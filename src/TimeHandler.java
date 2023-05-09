@@ -20,17 +20,23 @@ public class TimeHandler extends Thread{
                 int redLeftTime = board.getRedTimeLeft();
                 int whiteLeftTime = board.getWhiteTimeLeft();
                 MoveLeftTime moveTime = new MoveLeftTime(redLeftTime, whiteLeftTime);
+                moveTime.setWinner(Game.getWinner());
 
                 try {
                     objectOutputStream.writeObject(moveTime);
-                    System.out.println("WYSŁAŁEM GODZINKE");
                     sleep(1000);
                 } catch (IOException | InterruptedException e) {
-                    throw new RuntimeException(e);
+                    System.out.println("Player left the game!");
+                    Game.setGameStatus(false);
+                    break;
                 }
             }
             else{
-                System.out.println("jebac diska");
+                try {
+                    sleep(500);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
             }
         }
     }

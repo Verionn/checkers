@@ -18,7 +18,6 @@ public class Player extends JPanel implements MouseListener, MouseMotionListener
     private static final int COLUMNS = 8;
     private static final int BOARD_ARRAY_SIZE = 7;
     private static final int BOARD_SIZE = BOARD_ARRAY_SIZE * FIELD_SIZE;
-    public static final String WHITE_COLOR = "WHITE";
     public static final String RED_COLOR = "RED";
     private static final int RED_TIMER_POS_X = 830;
     private static final int RED_TIMER_POS_Y = 200;
@@ -31,7 +30,7 @@ public class Player extends JPanel implements MouseListener, MouseMotionListener
 
     private ObjectInputStream objectInputStream;
     private ObjectOutputStream objectOutputStream;
-    private BoardFrame boardFrame;
+    private Screen screen;
 
     private Pawn[][] pawn = new Pawn[ROWS][COLUMNS];
     private String color;
@@ -53,13 +52,13 @@ public class Player extends JPanel implements MouseListener, MouseMotionListener
     }
 
     private void paintFields(Graphics g2d) {
-         for (int i = 0; i < ROWS; i++) {
+        for (int i = 0; i < ROWS; i++) {
             for (int j = 0; j < COLUMNS; j++) {
                 if ((i + j) % 2 == 0) {
-                    g2d.setColor(Color.WHITE);
+                    g2d.setColor(Board.LightGray);
                     g2d.fillRect(j * FIELD_SIZE, i * FIELD_SIZE, FIELD_SIZE, FIELD_SIZE);
                 } else {
-                    g2d.setColor(Color.GREEN);
+                    g2d.setColor(Board.Green);
                     g2d.fillRect(j * FIELD_SIZE, i * FIELD_SIZE, FIELD_SIZE, FIELD_SIZE);
                 }
             }
@@ -100,6 +99,8 @@ public class Player extends JPanel implements MouseListener, MouseMotionListener
 
                             }
                         }
+                        g2d.setColor(Color.BLACK);
+                        g2d.drawOval(BOARD_SIZE - pawn[i][j].getX() + PAWN_OFFSET, BOARD_SIZE - pawn[i][j].getY() + PAWN_OFFSET, PAWN_SIZE, PAWN_SIZE);
                     }
                 }
             }
@@ -108,8 +109,7 @@ public class Player extends JPanel implements MouseListener, MouseMotionListener
         else{
             for (int i = 0; i < ROWS; i++) {
                 for (int j = 0; j < COLUMNS; j++) {
-                    if (pawn[i][j] != null)
-                    {
+                    if (pawn[i][j] != null) {
                         if(!pawn[i][j].isQueen()) {
                             if (pawn[i][j].getColor().equals(RED_COLOR)) {
                                 g2d.setColor(Color.RED);
@@ -138,6 +138,8 @@ public class Player extends JPanel implements MouseListener, MouseMotionListener
 
                             }
                         }
+                        g2d.setColor(Color.BLACK);
+                        g2d.drawOval(pawn[i][j].getX() + PAWN_OFFSET, pawn[i][j].getY() + PAWN_OFFSET, PAWN_SIZE, PAWN_SIZE);
                     }
                 }
             }
@@ -156,10 +158,11 @@ public class Player extends JPanel implements MouseListener, MouseMotionListener
     public void createWindow(){
         setBounds(180, 180, 640, 640);
         setLayout(null);
+        setBorder(BorderFactory.createLineBorder(Board.Green, 4));
         addMouseListener(this);
         addMouseMotionListener(this);
-        boardFrame.add(this);
-        if(color.equals("RED")){
+        screen.add(this);
+        if(color.equals(RED_COLOR)){
             redTimer.changePosition(WHITE_TIMER_POS_X, WHITE_TIMER_POS_Y);
             whiteTimer.changePosition(RED_TIMER_POS_X, RED_TIMER_POS_Y);
         }
@@ -188,17 +191,6 @@ public class Player extends JPanel implements MouseListener, MouseMotionListener
         } catch (IOException | ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
-
-        /*BoardInfo Data = null;
-        try {
-            Data = (BoardInfo) objectInputStream.readObject();
-            System.out.println("ODEBRALEM DANE!");
-        } catch (IOException | ClassNotFoundException e) {
-            throw new RuntimeException(e);
-        }
-        player.setPawn(Data.getPawn());
-        player.setMove(Data.getMove());
-        player.repaint();*/
     }
 
     public void connectToServer() throws IOException {
@@ -207,9 +199,9 @@ public class Player extends JPanel implements MouseListener, MouseMotionListener
             Socket connection = new Socket("127.0.0.1", 5036);
             if(connection.isConnected()){
 
-                boardFrame = new BoardFrame();
-                redTimer = boardFrame.getRedTimer();
-                whiteTimer = boardFrame.getWhiteTimer();
+                screen = new Screen();
+                redTimer = screen.getRedTimer();
+                whiteTimer = screen.getWhiteTimer();
 
                 objectInputStream = new ObjectInputStream(connection.getInputStream());
                 objectOutputStream = new ObjectOutputStream(connection.getOutputStream());
@@ -219,7 +211,7 @@ public class Player extends JPanel implements MouseListener, MouseMotionListener
             }
         }
 
-        Thread serverListener = new ServerListener(objectInputStream, this, whiteTimer, redTimer);
+        Thread serverListener = new ServerListener(objectInputStream, this, whiteTimer, redTimer, screen);
         serverListener.start();
     }
 
@@ -306,12 +298,10 @@ public class Player extends JPanel implements MouseListener, MouseMotionListener
     public void mouseDragged(MouseEvent e) {
         if(pawn[SELECTED_PAWN_Y][SELECTED_PAWN_X] != null) {
             if(color.equals(RED_COLOR)){
-                System.out.println("PRZESUWAM: " + SELECTED_PAWN_X + " | " + SELECTED_PAWN_Y);
                 pawn[SELECTED_PAWN_Y][SELECTED_PAWN_X].setX(BOARD_SIZE - e.getX() + FIELD_SIZE / 2);
                 pawn[SELECTED_PAWN_Y][SELECTED_PAWN_X].setY(BOARD_SIZE - e.getY() + FIELD_SIZE / 2);
             }
             else{
-                System.out.println("PRZESUWAM: " + SELECTED_PAWN_X + " | " + SELECTED_PAWN_Y);
                 pawn[SELECTED_PAWN_Y][SELECTED_PAWN_X].setX(e.getX() - FIELD_SIZE / 2);
                 pawn[SELECTED_PAWN_Y][SELECTED_PAWN_X].setY(e.getY() - FIELD_SIZE / 2);
             }

@@ -33,7 +33,7 @@ public class Server extends Thread{
     }
 
     public Server() {
-        board = new Board("ONLINE", GAME_WITHOUT_BOT);
+        board = new Board("ONLINE", GAME_WITHOUT_BOT, null);
         randPlayersColors();
     }
 
@@ -109,25 +109,33 @@ public class Server extends Thread{
 
             boardInfo.setPawn(newPawns);
 
-                try {
-                    for (int j = 0; j < MAX_PLAYERS; j++){
-                        System.out.println("SEND DATA");
-                        boardInfo.setColor(socket[j].getColor());
-                        boardInfo.setMove(Game.getMove());
-                        socket[j].getOutput().writeObject(boardInfo);
-                    }
-
-                    DataSend = true;
-
-                    int playerID = getPlayerID(Game.getMove());
-                    Move move = (Move) socket[playerID].getInput().readObject();
-
-                    board.MakeMove(move.getStartingPoint(), move.getTargetPoint(), socket[playerID].getColor());
-                    System.out.println("SERVER: RUCH: " + Game.getMove());
-
-                } catch (IOException | ClassNotFoundException e) {
-                    throw new RuntimeException(e);
+            try {
+                for (int j = 0; j < MAX_PLAYERS; j++){
+                    System.out.println("SEND DATA");
+                    boardInfo.setColor(socket[j].getColor());
+                    boardInfo.setMove(Game.getMove());
+                    socket[j].getOutput().writeObject(boardInfo);
+                    checkIfTheGameEnded(board);
                 }
+
+                DataSend = true;
+
+                int playerID = getPlayerID(Game.getMove());
+                Move move = (Move) socket[playerID].getInput().readObject();
+
+                board.MakeMove(move.getStartingPoint(), move.getTargetPoint(), socket[playerID].getColor());
+                System.out.println("SERVER: RUCH: " + Game.getMove());
+
+            } catch (IOException | ClassNotFoundException e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }
+
+    private void checkIfTheGameEnded(Board actualBoard){
+        if(actualBoard.getWhiteTimeLeft() == 0 || actualBoard.getRedTimeLeft() == 0){
+            Game.setGameStatus(false);
+            System.out.println("Zmieniam status serwera");
         }
     }
 

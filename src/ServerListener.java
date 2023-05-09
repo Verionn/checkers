@@ -6,12 +6,14 @@ public class ServerListener extends Thread{
     private final Player player;
     private final MoveTimer whiteTimer;
     private final MoveTimer redTimer;
+    private final Screen screen;
 
-    public ServerListener(ObjectInputStream objectInputStream, Player player, MoveTimer whiteTimer, MoveTimer redTimer) {
+    public ServerListener(ObjectInputStream objectInputStream, Player player, MoveTimer whiteTimer, MoveTimer redTimer, Screen screen) {
         this.objectInputStream = objectInputStream;
         this.player = player;
         this.whiteTimer = whiteTimer;
         this.redTimer = redTimer;
+        this.screen = screen;
     }
 
     public void run(){
@@ -29,35 +31,29 @@ public class ServerListener extends Thread{
 
         try{
             Object receivedData = objectInputStream.readObject();
-            System.out.println("OTRZYMALEM OBIEKT");
             if(receivedData instanceof BoardInfo){
-                System.out.println("OTRZYMALEM PLANSZE");
                 player.setPawn(((BoardInfo) receivedData).getPawn());
                 player.setMove(((BoardInfo) receivedData).getMove());
                 player.setColor(((BoardInfo) receivedData).getColor());
                 player.repaint();
             }
             else if(receivedData instanceof MoveLeftTime){
-                System.out.println("OTRZYMALEM CZAS");
-                redTimer.updateTimer(((MoveLeftTime) receivedData).getRedLeftTime());
-                whiteTimer.updateTimer(((MoveLeftTime) receivedData).getWhiteLeftTime());
+                System.out.println("Otrzymalem godzinke");
+                int whiteTimeLeft = ((MoveLeftTime) receivedData).getWhiteLeftTime();
+                int redTimeLeft = ((MoveLeftTime) receivedData).getRedLeftTime();
+                redTimer.updateTimer(redTimeLeft);
+                whiteTimer.updateTimer(whiteTimeLeft);
+
+                if(whiteTimeLeft == 0 || redTimeLeft == 0){
+                    new EndGamePanel(screen, ((MoveLeftTime) receivedData).getWinner());
+                }
+
                 whiteTimer.repaint();
                 redTimer.repaint();
             }
 
-            } catch (IOException | ClassNotFoundException e) {
-                throw new RuntimeException(e);
-            }
-
-        /*BoardInfo Data = null;
-        try {
-            Data = (BoardInfo) objectInputStream.readObject();
-            System.out.println("ODEBRALEM DANE!");
         } catch (IOException | ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
-        player.setPawn(Data.getPawn());
-        player.setMove(Data.getMove());
-        player.repaint();*/
     }
 }

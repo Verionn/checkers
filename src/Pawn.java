@@ -1,19 +1,9 @@
-/*import javax.swing.*;
-import java.awt.*;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;*/
-
 import java.io.Serializable;
-import java.util.Objects;
 
 public class Pawn implements Serializable, Cloneable {
-    /*private final static String WHITE_PAWN_IMAGE_PATH = "/home/verion/Pulpit/PO2/VIII - Project/Checkers/src/Images/White_Pawn.png";
-    private final static String RED_PAWN_IMAGE_PATH = "/home/verion/Pulpit/PO2/VIII - Project/Checkers/src/Images/Red_Pawn.png";*/
     private static final int FIELD_SIZE = 80;
     private final String Color;
 
-    /*private static final ImageIcon RedPawn = new ImageIcon(RED_PAWN_IMAGE_PATH);
-    private static final ImageIcon WhitePawn = new ImageIcon(WHITE_PAWN_IMAGE_PATH);*/
     private boolean IsQueen;
     private int X;
     private int Y;

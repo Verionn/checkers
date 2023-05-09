@@ -3,6 +3,7 @@ import java.io.Serializable;
 public class MoveLeftTime implements Serializable {
     int redLeftTime;
     int whiteLeftTime;
+    public String Winner;
 
     public MoveLeftTime(int redLeftTime, int whiteLeftTime) {
         this.redLeftTime = redLeftTime;
@@ -15,5 +16,13 @@ public class MoveLeftTime implements Serializable {
 
     public int getWhiteLeftTime() {
         return whiteLeftTime;
+    }
+
+    public String getWinner() {
+        return Winner;
+    }
+
+    public void setWinner(String winner) {
+        Winner = winner;
     }
 }
