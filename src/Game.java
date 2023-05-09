@@ -37,14 +37,18 @@ public class Game {
         if (TypeOfGame.equals("NORMAL")) {
             boardFrame = new BoardFrame();
             board = new Board("NORMAL", GAME_WITHOUT_BOT);
+            board.startTimer();
             boardFrame.add(board);
         }
         if(TypeOfGame.equals("BOT"))
         {
             boardFrame = new BoardFrame();
             randBotColor();
+
             board = new Board("BOT", botColor);
+            board.startTimer();
             boardFrame.add(board);
+
             Thread bot = new Bot(botColor, board);
             bot.start();
 
@@ -64,7 +68,7 @@ public class Game {
                     server.start();
 
                     try {
-                        TimeUnit.SECONDS.sleep(2);
+                        TimeUnit.SECONDS.sleep(1);
                     } catch (InterruptedException x) {
                         System.out.println("Interrupted! " + x);
                     }

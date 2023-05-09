@@ -4,6 +4,7 @@ public class BoardInfo implements Serializable {
     private Pawn[][] Pawn;
     private String Color;
     private String move;
+    private String reason;
 
     public BoardInfo() {
     }
@@ -30,5 +31,13 @@ public class BoardInfo implements Serializable {
 
     public void setMove(String move) {
         this.move = move;
+    }
+
+    public String getReason() {
+        return reason;
+    }
+
+    public void setReason(String reason) {
+        this.reason = reason;
     }
 }

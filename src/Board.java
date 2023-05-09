@@ -26,6 +26,9 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
     private int SELECTED_PAWN_X;
     private int SELECTED_PAWN_Y;
 
+    private int redTimeLeft = Game.GAME_LENGTH;
+    private int whiteTimeLeft = Game.GAME_LENGTH;
+
     private final Pawn[][] PAWN = new Pawn[ROWS][COLUMNS];
     private final Vector<Pawn> PawnsWhichCanCapture = new Vector<>();
     private final Vector<CapturePath> AllOptionsOfCapturingForSpecificPawn = new Vector<>();
@@ -1039,6 +1042,7 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
         }
         return max;
     }
+
     private boolean CheckIfWinIsPossible(){
         int whitePawns = Game.getWhitePawns();
         int redPawns = Game.getRedPawns();
@@ -1170,6 +1174,38 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
             }
         }
         AllOptionsOfCapturingForSpecificPawn.clear();
+    }
+
+    public int getRedTimeLeft() {
+        return redTimeLeft;
+    }
+
+    public int getWhiteTimeLeft() {
+        return whiteTimeLeft;
+    }
+
+    public void startTimer() {
+        ActionListener taskPerformer = evt -> {
+
+            if (whiteTimeLeft == 0  || redTimeLeft == 0 || !Game.getGameStatus()) {
+                ((Timer)evt.getSource()).stop();
+                return;
+            }
+
+            System.out.println("RED: " + redTimeLeft + "WHITE: " + whiteTimeLeft);
+
+            if(Game.getMove().equals("RED"))
+            {
+                redTimeLeft--;
+            }
+            if(Game.getMove().equals("WHITE"))
+            {
+                whiteTimeLeft--;
+            }
+        };
+
+        Timer timer = new Timer(1000, taskPerformer);
+        timer.start();
     }
 
     @Override

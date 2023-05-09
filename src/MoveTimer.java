@@ -1,6 +1,5 @@
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionListener;
 
 public class MoveTimer extends JPanel {
 
@@ -11,18 +10,27 @@ public class MoveTimer extends JPanel {
     private int TimeLeft;
 
     public MoveTimer(int PosX, int PosY, String color, int TimeInSec){
-        TimeLabel = new JLabel("Time: 5:00");
+        TimeLabel = new JLabel("");
         TimeLabel.setFont(new Font("Arial", Font.BOLD, 24));
         PawnColor = color;
         setBounds(PosX, PosY, TIMER_WIDTH, TIMER_HEIGHT);
         add(TimeLabel);
         TimeLeft = TimeInSec;
-        StartTimer();
+        updateTimer(TimeLeft);
     }
 
-    public void StartTimer() {
+    public void changePosition(int newPosX, int newPosY){
+        setBounds(newPosX, newPosY, TIMER_WIDTH, TIMER_HEIGHT);
+    }
 
+    public void updateTimer(int newTimeLeft){
+        TimeLeft = newTimeLeft;
+        int minute = TimeLeft / 60;
+        int second = TimeLeft % 60;
+        TimeLabel.setText("Time: " + minute + ":" + String.format("%02d", second));
+    }
 
+    /*public void StartTimer() {
 
         ActionListener taskPerformer = evt -> {
 
@@ -43,6 +51,5 @@ public class MoveTimer extends JPanel {
 
         Timer timer = new Timer(1000, taskPerformer);
         timer.start();
-    }
-
+    }*/
 }

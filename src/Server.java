@@ -12,8 +12,11 @@ public class Server extends Thread{
     private final String[] playerColor = new String[MAX_PLAYERS];
     ConnectionInfo[] socket = new ConnectionInfo[MAX_PLAYERS];
 
+    private boolean DataSend = false;
     private int onlinePlayers = 0;
     private final Board board;
+
+    TimeHandler[] timeHandler = new TimeHandler[MAX_PLAYERS];
 
     private void randPlayersColors() {
         Random rand = new Random();
@@ -70,6 +73,8 @@ public class Server extends Thread{
                 objectInputStream = new ObjectInputStream(connection.getInputStream());
 
                 socket[onlinePlayers] = new ConnectionInfo(objectInputStream, objectOutputStream, playerColor[onlinePlayers]);
+                timeHandler[onlinePlayers] = new TimeHandler(objectOutputStream, board, this);
+
                 onlinePlayers++;
 
                 if(onlinePlayers == MAX_PLAYERS) {
@@ -82,8 +87,13 @@ public class Server extends Thread{
             }
         }
 
-        while (Game.getGameStatus()){
+        board.startTimer();
+        for (int i = 0; i < MAX_PLAYERS; i++){
+            timeHandler[i].start();
+        }
 
+        while (Game.getGameStatus()){
+            System.out.println("GŁOWNA PETELKA");
             BoardInfo boardInfo = new BoardInfo();
 
             Pawn[][] pawns = board.getPAWN();
@@ -107,6 +117,8 @@ public class Server extends Thread{
                         socket[j].getOutput().writeObject(boardInfo);
                     }
 
+                    DataSend = true;
+
                     int playerID = getPlayerID(Game.getMove());
                     Move move = (Move) socket[playerID].getInput().readObject();
 
@@ -117,5 +129,9 @@ public class Server extends Thread{
                     throw new RuntimeException(e);
                 }
         }
+    }
+
+    public boolean isDataSend() {
+        return DataSend;
     }
 }

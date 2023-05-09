@@ -6,10 +6,6 @@ import java.awt.event.MouseMotionListener;
 import java.io.*;
 import java.net.Socket;
 
-// do tego watek na odczytywanie timera
-//player probuje sie podlaczyc jezeli nie to klasa Board przechwytuje wyjatek i tworzy serwer
-
-
 public class Player extends JPanel implements MouseListener, MouseMotionListener {
     private static final int FIELD_SIZE = 80;
     private static final int PAWN_SIZE = 60;
@@ -24,21 +20,26 @@ public class Player extends JPanel implements MouseListener, MouseMotionListener
     private static final int BOARD_SIZE = BOARD_ARRAY_SIZE * FIELD_SIZE;
     public static final String WHITE_COLOR = "WHITE";
     public static final String RED_COLOR = "RED";
+    private static final int RED_TIMER_POS_X = 830;
+    private static final int RED_TIMER_POS_Y = 200;
+    private static final int WHITE_TIMER_POS_X = 830;
+    private static final int WHITE_TIMER_POS_Y = 760;
+
 
     private int SELECTED_PAWN_X;
     private int SELECTED_PAWN_Y;
 
-    ObjectInputStream objectInputStream;
-    ObjectOutputStream objectOutputStream;
+    private ObjectInputStream objectInputStream;
+    private ObjectOutputStream objectOutputStream;
+    private BoardFrame boardFrame;
 
     private Pawn[][] pawn = new Pawn[ROWS][COLUMNS];
     private String color;
     private String move;
 
+    private MoveTimer redTimer;
+    private MoveTimer whiteTimer;
 
-    public String getColor() {
-        return color;
-    }
 
     public void setColor(String color) {
         this.color = color;
@@ -143,21 +144,6 @@ public class Player extends JPanel implements MouseListener, MouseMotionListener
         }
     }
 
-    public void getData() {
-
-        BoardInfo Data;
-        try {
-            Data = (BoardInfo) objectInputStream.readObject();
-            System.out.println("ODEBRALEM DANE!");
-        } catch (IOException | ClassNotFoundException e) {
-            throw new RuntimeException(e);
-        }
-        pawn = Data.getPawn();
-        setColor(Data.getColor());
-        setMove(Data.getMove());
-        repaint();
-    }
-
     public void sendData(Move move){
         try {
             objectOutputStream.writeObject(move);
@@ -172,39 +158,71 @@ public class Player extends JPanel implements MouseListener, MouseMotionListener
         setLayout(null);
         addMouseListener(this);
         addMouseMotionListener(this);
-        BoardFrame boardFrame = new BoardFrame();
         boardFrame.add(this);
+        if(color.equals("RED")){
+            redTimer.changePosition(WHITE_TIMER_POS_X, WHITE_TIMER_POS_Y);
+            whiteTimer.changePosition(RED_TIMER_POS_X, RED_TIMER_POS_Y);
+        }
+    }
+
+    public void getData(){
+
+        try{
+            Object receivedData = objectInputStream.readObject();
+            System.out.println("OTRZYMALEM OBIEKT");
+            if(receivedData instanceof BoardInfo){
+                System.out.println("OTRZYMALEM PLANSZE");
+                setPawn(((BoardInfo) receivedData).getPawn());
+                setMove(((BoardInfo) receivedData).getMove());
+                setColor(((BoardInfo) receivedData).getColor());
+                repaint();
+            }
+            else if(receivedData instanceof MoveLeftTime){
+                System.out.println("OTRZYMALEM CZAS");
+                redTimer.updateTimer(((MoveLeftTime) receivedData).getRedLeftTime());
+                whiteTimer.updateTimer(((MoveLeftTime) receivedData).getWhiteLeftTime());
+                whiteTimer.repaint();
+                redTimer.repaint();
+            }
+
+        } catch (IOException | ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+
+        /*BoardInfo Data = null;
+        try {
+            Data = (BoardInfo) objectInputStream.readObject();
+            System.out.println("ODEBRALEM DANE!");
+        } catch (IOException | ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+        player.setPawn(Data.getPawn());
+        player.setMove(Data.getMove());
+        player.repaint();*/
     }
 
     public void connectToServer() throws IOException {
-
         while(true){
-             System.out.println("LACZE SIE!");
-             Socket connection = new Socket("127.0.0.1", 5036);
-             if(connection.isConnected()){
-                 objectInputStream = new ObjectInputStream(connection.getInputStream());
-                 objectOutputStream = new ObjectOutputStream(connection.getOutputStream());
-                 createWindow();
-                 getData();
-                 break;
-             }
-         }
-        Thread serverListener = new ServerListener(objectInputStream, objectOutputStream, this);
-        serverListener.start();
-     }
+            System.out.println("LACZE SIE!");
+            Socket connection = new Socket("127.0.0.1", 5036);
+            if(connection.isConnected()){
 
-    public void reverseBoard(){
+                boardFrame = new BoardFrame();
+                redTimer = boardFrame.getRedTimer();
+                whiteTimer = boardFrame.getWhiteTimer();
 
-        Pawn[][] reversePawn = new Pawn[ROWS][COLUMNS];
-
-        for (int i = 0 ; i < ROWS; i++){
-            for (int j = 0; j < COLUMNS; j++){
-                if(pawn[i][j] != null){
-                    reversePawn[ROWS-i][COLUMNS-j] = pawn[i][j];
-                }
+                objectInputStream = new ObjectInputStream(connection.getInputStream());
+                objectOutputStream = new ObjectOutputStream(connection.getOutputStream());
+                getData();
+                createWindow();
+                break;
             }
         }
+
+        Thread serverListener = new ServerListener(objectInputStream, this, whiteTimer, redTimer);
+        serverListener.start();
     }
+
 
     public void setPawn(Pawn[][] pawn) {
         this.pawn = pawn;
