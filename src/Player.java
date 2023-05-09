@@ -233,23 +233,20 @@ public class Player extends JPanel implements MouseListener, MouseMotionListener
             return;
         }
 
+        int x;
+        int y;
         if(color.equals(RED_COLOR)) {
-            int x = BOARD_SIZE / FIELD_SIZE - e.getX() / FIELD_SIZE;
-            int y = BOARD_SIZE / FIELD_SIZE - e.getY() / FIELD_SIZE;
-            if(pawn[y][x] != null)
-            {
-                SELECTED_PAWN_Y = y;
-                SELECTED_PAWN_X = x;
-            }
+            x = BOARD_SIZE / FIELD_SIZE - e.getX() / FIELD_SIZE;
+            y = BOARD_SIZE / FIELD_SIZE - e.getY() / FIELD_SIZE;
         }
         else{
-            int x = e.getX() / FIELD_SIZE;
-            int y = e.getY() / FIELD_SIZE;
-            if(pawn[y][x] != null)
-            {
-                SELECTED_PAWN_Y = y;
-                SELECTED_PAWN_X = x;
-            }
+            x = e.getX() / FIELD_SIZE;
+            y = e.getY() / FIELD_SIZE;
+        }
+        if(pawn[y][x] != null)
+        {
+            SELECTED_PAWN_Y = y;
+            SELECTED_PAWN_X = x;
         }
     }
 

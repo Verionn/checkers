@@ -1,6 +1,6 @@
 public class VectorInfo {
-    private int i; // index of the vector
-    private int j;// index of the last similar point
+    private final int i; // index of the vector
+    private final int j;// index of the last similar point
 
     public int getI() {
         return i;

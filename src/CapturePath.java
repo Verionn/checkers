@@ -1,7 +1,7 @@
 import java.util.Vector;
 
 public class CapturePath {
-    private Vector<Point> Path = new Vector<>();
+    private Vector<Point> Path;
     private Point StartingPoint;
     private boolean finished;
 

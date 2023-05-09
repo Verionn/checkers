@@ -8,7 +8,7 @@ public class MoveTimer extends JPanel {
     private final JLabel TimeLabel;
     private int TimeLeft;
 
-    public MoveTimer(int PosX, int PosY, String color, int TimeInSec){
+    public MoveTimer(int PosX, int PosY, int TimeInSec){
         TimeLabel = new JLabel("");
         TimeLabel.setFont(new Font("Arial", Font.BOLD, 24));
         setLocation(PosX, PosY);

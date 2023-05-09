@@ -19,8 +19,8 @@ public class Screen extends JFrame {
         setBackground(Board.LightGray);
         setResizable(false);
         setLayout(null);
-        whiteTimer = new MoveTimer(WHITE_TIMER_POS_X, WHITE_TIMER_POS_Y, "WHITE", Game.GAME_LENGTH);
-        redTimer = new MoveTimer(RED_TIMER_POS_X, RED_TIMER_POS_Y, "RED", Game.GAME_LENGTH);
+        whiteTimer = new MoveTimer(WHITE_TIMER_POS_X, WHITE_TIMER_POS_Y, Game.GAME_LENGTH);
+        redTimer = new MoveTimer(RED_TIMER_POS_X, RED_TIMER_POS_Y, Game.GAME_LENGTH);
         add(whiteTimer);
         add(redTimer);
         setVisible(true);

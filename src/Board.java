@@ -151,7 +151,7 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
         return MandatoryMoves;
     }
 
-    public Vector<Move> getAvaiableMoves() {
+    public Vector<Move> getAvailableMoves() {
         return AvailableMoves;
     }
 
@@ -359,23 +359,23 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
 
     private boolean ValidateMove(int PosX, int PosY, int TargetX, int TargetY, Pawn pawn) {
         if (!Game.getMove().equals(pawn.getColor())) {
-            System.out.println("Ruch wykonał pion innego koloru");
+            System.out.println("MOVE MADE BY ANOTHER PLAYER COLOR");
             return false;
         }
         if (TargetX > 7 || TargetY > 7 || TargetX < 0 || TargetY < 0) {
-            System.out.println("Ruch poza mape");
+            System.out.println("MOVE OVER THE MAP");
             return false;
         }
         if (PAWN[TargetY][TargetX] != null) {
-            System.out.println("Ruch w miejsce istniejacego juz pionka");
+            System.out.println("MOVE TO PLACE WHERE PAWN ALREADY EXIST");
             return false;
         }
         if (INT_BOARD[TargetY][TargetX] == 0) {
-            System.out.println("Ruch w miejsce zabronione");
+            System.out.println("MOVE TO THE FORBIDDEN PLACE");
             return false;
         }
         if (PosX == TargetX && PosY == TargetY) {
-            System.out.println("Ruch w te samo miejsce");
+            System.out.println("MOVE TO THE SAME PLACE");
             return false;
         }
         if(MandatoryMoves.size() != 0) {
@@ -383,7 +383,7 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
                 CapturePath Path = MandatoryMoves.get(i);
                 Vector<Point> CapturePath = Path.getPath();
                 if (!CheckStartingPoint(PosX, PosY)) {
-                    System.out.println("Bicie zlym pionkiem");
+                    System.out.println("CAPTURE WITH WRONG PAWN");
                     return false;
                 }
                 System.out.println("Starting point: " + Path.getStartingPoint().getX() + " | " + Path.getStartingPoint().getY());
@@ -412,12 +412,12 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
 
         if(pawn.isQueen()) {
             if(!CheckIfFieldIsInDiagonal(new Point(PosX, PosY), new Point(TargetX, TargetY))) {
-                System.out.println("Zly ruch dameczka");
+                System.out.println("QUEEN WRONG MOVE");
                 return false;
             }
             if(!CheckIfThatQueenMoveIsAllowed(new Point(TargetX, TargetY), new Point(PosX, PosY)))
             {
-                System.out.println("Zly ruch dameczka byniu");
+                System.out.println("QUEEN WRONG MOVE");
                 return false;
             }
         }
@@ -430,22 +430,22 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
     private boolean CheckIfMoveIsForward(int PosY, int TargetY, String color) {
         if (color.equals(RED_COLOR)) {
             if (PosY >= TargetY) {
-                System.out.println("Ruch do tylu lub w bok pionem czerwonym");
+                System.out.println("RED BEHIND OR SIDEWAYS");
                 return false;
             }
             if (TargetY >= PosY + 2) {
-                System.out.println("Ruch czerwonym pionem za daleko do przodu");
+                System.out.println("RED TOO FAR");
                 return false;
             }
 
         }
         if (color.equals(WHITE_COLOR)) {
             if (PosY <= TargetY) {
-                System.out.println("Ruch do tylu lub w bok pionem bialym");
+                System.out.println("WHITE BEHIND OR SIDEWAYS");
                 return false;
             }
             if (TargetY <= PosY - 2) {
-                System.out.println("Ruch bialym pionem za daleko do przodu");
+                System.out.println("WHITE TOO FAR");
                 return false;
             }
         }
@@ -654,7 +654,7 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
         return PAWN[(y1 + y2) / 2][(x1 + x2) / 2] != null;
     }
 
-    private VectorInfo ReturnVectorWithSpecficLastPoint(Point CheckedPoint, String type) {
+    private VectorInfo ReturnVectorWithSpecificLastPoint(Point CheckedPoint, String type) {
         for (int i = 0; i < AllOptionsOfCapturingForSpecificPawn.size(); i++) {
             CapturePath Path = AllOptionsOfCapturingForSpecificPawn.get(i);
 
@@ -700,7 +700,7 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
             return;
         }
 
-        VectorInfo PathIndex = ReturnVectorWithSpecficLastPoint(CheckedPoint, type);
+        VectorInfo PathIndex = ReturnVectorWithSpecificLastPoint(CheckedPoint, type);
         if (PathIndex.getI() == -1 && PathIndex.getJ() == -1) {
             Vector<Point> NewPath = new Vector<>();
             NewPath.add(CheckedPoint);
@@ -1013,11 +1013,9 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
             return;
         }
         if (Game.getMove().equals(WHITE_COLOR)) {
-            System.out.println("ZMIENIAM RUCH Z WHITE NA RED");
             Game.setMove(RED_COLOR);
         }
         else {
-            System.out.println("ZMIENIAM RUCH Z RED NA WHITE");
             Game.setMove(WHITE_COLOR);
         }
         MandatoryMoves.clear();
@@ -1080,7 +1078,7 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
             if (whitePawns == 0) {
                 Game.setWinner(RED_COLOR);
                 Game.setGameStatus(false);
-                System.out.println("KONIEC GRY ZWYCIESTWO Czerwonych");
+                System.out.println("GAME OVER - RED WIN");
                 if(!GameMode.equals("ONLINE")){
                     new EndGamePanel(Screen, Game.getWinner());
                 }
@@ -1089,7 +1087,7 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
             else if (redPawns == 0) {
                 Game.setWinner(WHITE_COLOR);
                 Game.setGameStatus(false);
-                System.out.println("KONIEC GRY - ZWYCIESTWO Bialych");
+                System.out.println("GAME OVER - WHITE WIN");
                 if(!GameMode.equals("ONLINE")){
                     new EndGamePanel(Screen, Game.getWinner());
                 }
@@ -1101,7 +1099,7 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
                 {
                     Game.setWinner(WHITE_COLOR);
                     Game.setGameStatus(false);
-                    System.out.println("CZERWONE BRAK RUCHOW");
+                    System.out.println("RED NO MOVES");
                     if(!GameMode.equals("ONLINE")){
                         new EndGamePanel(Screen, Game.getWinner());
                     }
@@ -1111,7 +1109,7 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
                 {
                     Game.setWinner(RED_COLOR);
                     Game.setGameStatus(false);
-                    System.out.println("BIALE BRAK RUCHOW");
+                    System.out.println("WHITE NO MOVES");
                     if(!GameMode.equals("ONLINE")){
                         new EndGamePanel(Screen, Game.getWinner());
                     }
@@ -1121,7 +1119,7 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
             if(!CheckIfWinIsPossible()){
                 Game.setWinner("DRAW");
                 Game.setGameStatus(false);
-                System.out.println("REMIS POPRZEZ BRAK DOSTATENCZEGO MATERIALU DO ZWYCIESTWA");
+                System.out.println("DRAW BCS NOT ENOUGH MATERIAL");
                 if(!GameMode.equals("ONLINE")){
                     new EndGamePanel(Screen, Game.getWinner());
                 }
@@ -1151,7 +1149,7 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
         }
 
         if(!PAWN[StartingY][StartingX].getColor().equals(color)) {
-            System.out.println("Gracz ruszyl sie nie swoim pionkiem");
+            System.out.println("PLAYER MOVED WRONG PIECE");
             return;
         }
 
@@ -1276,7 +1274,7 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
 
         if(GameMode.equals("BOT")){
             if(move.equals(BotColor)){
-                System.out.println("Gracz ruszyl sie pionem bota");
+                System.out.println("PLAYER MOVED BOT PIECES");
 
                 PAWN[SELECTED_PAWN_Y][SELECTED_PAWN_X].setX(SELECTED_PAWN_X * FIELD_SIZE);
                 PAWN[SELECTED_PAWN_Y][SELECTED_PAWN_X].setY(SELECTED_PAWN_Y * FIELD_SIZE);
