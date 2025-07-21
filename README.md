@@ -1,5 +1,8 @@
 # Checkers
 
+**This project was developed as part of the *Object-Oriented Programming* course during the 4th semester of studies at Lodz University of Technology.**
+
+
 The program is a classic checkers game with three modes of play:
 
 **- single-player against a computer opponent**
